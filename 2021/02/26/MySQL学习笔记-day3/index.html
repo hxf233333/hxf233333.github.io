@@ -239,16 +239,21 @@
   </header>
   <div id="section" class="post-content">
     <h3 id="5-4-常见函数"><a href="#5-4-常见函数" class="headerlink" title="5.4 常见函数"></a>5.4 常见函数</h3><ul>
-<li>概念：类似于c++的方法，将一组逻辑语句封装在方法体中，对外暴露方法名</li>
-<li>好处：1.隐藏了实现细节 2.提高代码的重用性</li>
-<li>调用：select 函数名（实参列表） 【from表】;</li>
-<li>特点：<pre><code>①叫什么（函数名）
-②干什么（函数功能）</code></pre>
+<li><p>概念：类似于c++的方法，将一组逻辑语句封装在方法体中，对外暴露方法名</p>
 </li>
-<li>分类：<pre><code>1、单行函数
-如 `concat`、`length`、`ifnull`等
-2、分组函数
-功能：做统计使用，又称为统计函数、聚合函数、组函数</code></pre>
+<li><p>好处：1.隐藏了实现细节 2.提高代码的重用性</p>
+</li>
+<li><p>调用：<code>select  函数名（实参列表） 【from表】</code>;</p>
+</li>
+<li><p>特点：</p>
+<p>​    ①叫什么（函数名）</p>
+<p>​    ②干什么（函数功能）</p>
+</li>
+<li><p>分类：</p>
+<p>​    1、单行函数</p>
+<p>​    如 <code>concat</code>、<code>length</code>、<code>ifnull</code>等    </p>
+<p>​    2、分组函数</p>
+<p>​    功能：做统计使用，又称为统计函数、聚合函数、组函数</p>
 </li>
 </ul>
 <h4 id="5-4-1-单行函数"><a href="#5-4-1-单行函数" class="headerlink" title="5.4.1 单行函数"></a>5.4.1 单行函数</h4><pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">#一、字符函数</span>
@@ -423,18 +428,20 @@ substr(str,起始索引)
 <li><p>说明：分组函数往往用于实现将一组数据进行统计计算，最终得到一个值，又称为聚合函数或统计函数</p>
 </li>
 <li><p>分组函数清单：</p>
-<pre><code>`sum`(字段名)：求和
-`avg`(字段名)：求平均数
-`max`(字段名)：求最大值
-`min`(字段名)：求最小值
-`count`(字段名)：计算非空字段值的个数</code></pre>
+<p>​    <code>sum</code>(字段名)：求和</p>
+<p>​    <code>avg</code>(字段名)：求平均数</p>
 </li>
+</ul>
+<p>​    <code>max</code>(字段名)：求最大值</p>
+<p>  ​    <code>min</code>(字段名)：求最小值</p>
+<p>  <code>count</code>(字段名)：计算非空字段值的个数</p>
+<ul>
 <li><p>特点：</p>
-<pre><code>1、`sum`、`avg`一般用于处理数值型，`max`、`min`、`count`可以处理任何类型
-2、以为分组函数都忽略null值
-3、可以和`distinct`搭配实现去重的运算
-4、一般使用`count(*)`用作统计函数
-5、和分组函数一同查询的字段要求是`group by`后的字段    </code></pre>
+<p>​    1、<code>sum</code>、<code>avg</code>一般用于处理数值型，<code>max</code>、<code>min</code>、<code>count</code>可以处理任何类型</p>
+<p>​    2、以为分组函数都忽略null值</p>
+<p>​    3、可以和<code>distinct</code>搭配实现去重的运算</p>
+<p>​    4、一般使用<code>count(*)</code>用作统计函数</p>
+<p>​    5、和分组函数一同查询的字段要求是<code>group by</code>后的字段    </p>
 </li>
 </ul>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">#案例1 ：查询员工信息表中，所有员工的工资和、工资平均值、最低工资、最高工资、有工资的个数</span>
