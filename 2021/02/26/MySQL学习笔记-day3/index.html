@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html  lang="zh-CN" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="无情">
+  <link rel="icon" href="/img/hxf233333.png">
+  <title>MySQL学习笔记-day3</title>
+  
+  
+  <meta property="og:title" content="MySQL学习笔记-day3">
+  
+  
+  <meta property="og:url" content="https://github.com/hxf233333/2021/02/26/MySQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-day3/index.html">
+  
+  
+  <meta property="og:img" content="/img/hxf233333.png">
+  
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2021-02-26">
+  <meta property="og:article:modified_time" content="2021-02-26">
+  <meta property="og:article:author" content="hxf233333">
+  
+  
+  <meta property="og:article:tag" content="MySQL">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+  
+  
+  <link href="/js/lib/prism/prism.min.css" rel="stylesheet" data-prism="prism">
+  
+  
+  
+<link rel="stylesheet" href="/js/lib/prism/prism-line-numbers.min.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 5.3.0"><link rel="alternate" href="/atom.xml" title="无情" type="application/atom+xml">
+</head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/hxf233333.png" alt="logo">
+      
+      <span class="navbar-logo-dsc">hxf233333</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    首页
+    
+    </a>
+    
+    <a href="/archives" class="navbar-menu-item">
+    
+    归档
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于
+    
+    </a>
+    
+    <a href="/links" class="navbar-menu-item">
+    
+    友链
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      MySQL学习笔记-day3
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2021-02-26T11:42:30.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2021-02-26</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/学习笔记/" class="post-meta-link">学习笔记</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>1.4k 字</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/MySQL/" class="post-meta-link">MySQL</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <h3 id="5-4-常见函数"><a href="#5-4-常见函数" class="headerlink" title="5.4 常见函数"></a>5.4 常见函数</h3><ul>
+<li>概念：类似于c++的方法，将一组逻辑语句封装在方法体中，对外暴露方法名</li>
+<li>好处：1.隐藏了实现细节 2.提高代码的重用性</li>
+<li>调用：select 函数名（实参列表） 【from表】;</li>
+<li>特点：<pre><code>①叫什么（函数名）
+②干什么（函数功能）</code></pre>
+</li>
+<li>分类：<pre><code>1、单行函数
+如 `concat`、`length`、`ifnull`等
+2、分组函数
+功能：做统计使用，又称为统计函数、聚合函数、组函数</code></pre>
+</li>
+</ul>
+<h4 id="5-4-1-单行函数"><a href="#5-4-1-单行函数" class="headerlink" title="5.4.1 单行函数"></a>5.4.1 单行函数</h4><pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">#一、字符函数</span>
+
+<span class="token comment">#1.length 获取参数值的字节个数</span>
+<span class="token keyword">SELECT</span> LENGTH<span class="token punctuation">(</span><span class="token string">'john'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">SELECT</span> LENGTH<span class="token punctuation">(</span><span class="token string">'张三丰hahaha'</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">#utf8:汉字占3个字节</span>
+
+<span class="token keyword">SHOW</span> VARIABLES <span class="token operator">LIKE</span> <span class="token string">'%char%'</span><span class="token punctuation">;</span>
+
+<span class="token comment">#2.concat 拼接字符串</span>
+<span class="token keyword">SELECT</span> CONCAT<span class="token punctuation">(</span>last_name<span class="token punctuation">,</span><span class="token string">'_'</span><span class="token punctuation">,</span>first_name<span class="token punctuation">)</span> 姓名 <span class="token keyword">FROM</span> employees<span class="token punctuation">;</span>
+
+<span class="token comment">#3.upper、lower</span>
+<span class="token keyword">SELECT</span> UPPER<span class="token punctuation">(</span><span class="token string">'john'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">SELECT</span> LOWER<span class="token punctuation">(</span><span class="token string">'joHn'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">#示例：将姓变大，名变小写，然后拼接</span>
+<span class="token keyword">SELECT</span> CONCAT<span class="token punctuation">(</span>UPPER<span class="token punctuation">(</span>last_name<span class="token punctuation">)</span><span class="token punctuation">,</span>LOWER<span class="token punctuation">(</span>first_name<span class="token punctuation">)</span><span class="token punctuation">)</span> 姓名 <span class="token keyword">FROM</span> employees<span class="token punctuation">;</span>
+
+<span class="token comment">#4.substr、substring</span>
+<span class="token comment">/*
+注意：起始索引从1开始！！！
+substr(str,起始索引，截取的字符长度)
+substr(str,起始索引)
+*/</span>
+<span class="token comment">#截取从指定索引处后面所有字符</span>
+<span class="token keyword">SELECT</span> SUBSTR<span class="token punctuation">(</span><span class="token string">'张三丰爱上了郭襄'</span><span class="token punctuation">,</span><span class="token number">7</span><span class="token punctuation">)</span> out_put<span class="token punctuation">;</span>
+
+<span class="token comment">#截取从指定索引处指定字符串长度的字符</span>
+<span class="token keyword">SELECT</span> SUBSTR<span class="token punctuation">(</span><span class="token string">'张三丰爱上了郭襄'</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">)</span> out_put<span class="token punctuation">;</span>
+
+<span class="token comment">#案例：姓名中首字符大写，其他字符小写然后用_拼接，显示出来</span>
+<span class="token keyword">SELECT</span> CONCAT<span class="token punctuation">(</span>UPPER<span class="token punctuation">(</span>SUBSTR<span class="token punctuation">(</span>last_name<span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token string">'_'</span><span class="token punctuation">,</span>LOWER<span class="token punctuation">(</span>SUBSTR<span class="token punctuation">(</span>last_name<span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">AS</span> out_put
+<span class="token keyword">FROM</span> employees<span class="token punctuation">;</span>
+
+<span class="token comment">#5.instr 返回子串第一次出现的索引，如果找不到返回0</span>
+<span class="token keyword">SELECT</span> INSTR<span class="token punctuation">(</span><span class="token string">'三打白骨精aaa白骨精bb白骨精'</span><span class="token punctuation">,</span><span class="token string">'白骨精'</span><span class="token punctuation">)</span> out_put<span class="token punctuation">;</span>
+
+<span class="token comment">#6.trim 去前后指定的字符，默认是去空格</span>
+<span class="token keyword">SELECT</span> TRIM<span class="token punctuation">(</span><span class="token string">' 虚  竹    '</span><span class="token punctuation">)</span>  <span class="token keyword">AS</span> a<span class="token punctuation">;</span>
+<span class="token keyword">SELECT</span> TRIM<span class="token punctuation">(</span><span class="token string">'x'</span> <span class="token keyword">FROM</span> <span class="token string">'xxxxxx虚xxx竹xxxxxxxxxxxxxxxxxx'</span><span class="token punctuation">)</span>  <span class="token keyword">AS</span> a<span class="token punctuation">;</span>
+
+<span class="token comment">#7.lpad/rpad 左填充/右填充</span>
+<span class="token keyword">SELECT</span> LPAD<span class="token punctuation">(</span><span class="token string">'木婉清'</span><span class="token punctuation">,</span><span class="token number">10</span><span class="token punctuation">,</span><span class="token string">'a'</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">#左填充10个a</span>
+<span class="token keyword">SELECT</span> RPAD<span class="token punctuation">(</span><span class="token string">'木婉清'</span><span class="token punctuation">,</span><span class="token number">10</span><span class="token punctuation">,</span><span class="token string">'a'</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">#右填充10个a</span>
+
+<span class="token comment">#8.replace(字符,被替换字符,替换字符) 替换</span>
+
+
+<span class="token comment">#二、数学函数</span>
+
+<span class="token comment">#1.abs 绝对值</span>
+<span class="token keyword">SELECT</span> ABS<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">2.4</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">#2.ceil 向上取整  返回>=该参数的最小整数</span>
+<span class="token keyword">SELECT</span> CEIL<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1.09</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">SELECT</span> CEIL<span class="token punctuation">(</span><span class="token number">0.09</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">SELECT</span> CEIL<span class="token punctuation">(</span><span class="token number">1.00</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">#3.floor 向下取整，返回&lt;=该参数的最大整数</span>
+<span class="token keyword">SELECT</span> FLOOR<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1.09</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">SELECT</span> FLOOR<span class="token punctuation">(</span><span class="token number">0.09</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">SELECT</span> FLOOR<span class="token punctuation">(</span><span class="token number">1.00</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">#4.round 四舍五入</span>
+<span class="token keyword">SELECT</span> <span class="token function">ROUND</span><span class="token punctuation">(</span><span class="token number">1.8712345</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">SELECT</span> <span class="token function">ROUND</span><span class="token punctuation">(</span><span class="token number">1.8712345</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">#5.truncate 截断</span>
+<span class="token keyword">SELECT</span> <span class="token keyword">TRUNCATE</span><span class="token punctuation">(</span><span class="token number">1.8712345</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">#6.mod 取模</span>
+<span class="token keyword">SELECT</span> <span class="token function">MOD</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">10</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">#a%b = a-(INT)a/b*b</span>
+<span class="token comment">#-10%3 = -10 - (-10)/3*3   = -1</span>
+
+
+<span class="token comment">#三、日期函数</span>
+
+<span class="token comment">#1.now 返回当前系统日期+时间</span>
+<span class="token keyword">SELECT</span> <span class="token function">NOW</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">#2.curdate 返回当前系统日期，不包含时间</span>
+<span class="token keyword">SELECT</span> CURDATE<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">#3.curtime 返回当前时间，不包含日期</span>
+<span class="token keyword">SELECT</span> CURTIME<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">#4.可以获取指定的部分，年、月、日、时、分、秒</span>
+<span class="token keyword">SELECT</span> <span class="token keyword">YEAR</span><span class="token punctuation">(</span><span class="token function">NOW</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> 年；
+<span class="token keyword">SELECT</span> <span class="token keyword">YEAR</span><span class="token punctuation">(</span>hiredate<span class="token punctuation">)</span> 年 <span class="token keyword">FROM</span> employees；
+
+<span class="token comment">#5.str_to_date 按指定格式解析字符串为日期类型</span>
+<span class="token keyword">SELECT</span> <span class="token operator">*</span> <span class="token keyword">FROM</span> employees
+<span class="token keyword">WHERE</span> hiredate<span class="token operator">&lt;</span>STR_TO_DATE<span class="token punctuation">(</span><span class="token string">'3/15 1998'</span><span class="token punctuation">,</span><span class="token string">'%m/%d %Y'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">#6.date_format 将日期转换成字符</span>
+<span class="token keyword">SELECT</span> DATE_FORMAT<span class="token punctuation">(</span><span class="token function">NOW</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token string">'%Y年%m月%d日'</span><span class="token punctuation">)</span> 日期<span class="token punctuation">;</span>
+
+
+<span class="token comment">#四、其他函数</span>
+
+<span class="token keyword">SELECT</span> VERSION<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">SELECT</span> <span class="token keyword">DATABASE</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">SELECT</span> <span class="token keyword">USER</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+
+<span class="token comment">#五、流程控制函数</span>
+
+<span class="token comment">#1.if函数</span>
+
+<span class="token keyword">SELECT</span> <span class="token keyword">IF</span><span class="token punctuation">(</span><span class="token number">100</span><span class="token operator">></span><span class="token number">9</span><span class="token punctuation">,</span><span class="token string">'好'</span><span class="token punctuation">,</span><span class="token string">'坏'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">#案例：如果有奖金，则显示最终奖金，如果没有，则显示0</span>
+<span class="token keyword">SELECT</span> <span class="token keyword">IF</span><span class="token punctuation">(</span>commission_pct <span class="token operator">IS</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">,</span>salary<span class="token operator">*</span><span class="token number">12</span><span class="token operator">*</span>commission_pct<span class="token punctuation">)</span> 奖金<span class="token punctuation">,</span>commission_pct
+<span class="token keyword">FROM</span> employees<span class="token punctuation">;</span>
+
+<span class="token comment">#2.case函数</span>
+①情况<span class="token number">1</span> ：类似于switch语句，可以实现等值判断
+<span class="token keyword">CASE</span> 表达式
+<span class="token keyword">WHEN</span> 值<span class="token number">1</span> <span class="token keyword">THEN</span> 结果<span class="token number">1</span>
+<span class="token keyword">WHEN</span> 值<span class="token number">2</span> <span class="token keyword">THEN</span> 结果<span class="token number">2</span>
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span class="token keyword">ELSE</span> 结果n
+<span class="token keyword">END</span>
+
+案例：
+部门编号是<span class="token number">30</span>，工资显示为<span class="token number">2</span>倍
+部门编号是<span class="token number">50</span>，工资显示为<span class="token number">3</span>倍
+部门编号是<span class="token number">60</span>，工资显示为<span class="token number">4</span>倍
+否则不变
+
+显示 部门编号，旧工资，新工资
+
+<span class="token keyword">SELECT</span> department_id<span class="token punctuation">,</span>salary<span class="token punctuation">,</span>
+<span class="token keyword">CASE</span> department_id
+<span class="token keyword">WHEN</span> <span class="token number">30</span> <span class="token keyword">THEN</span> salary<span class="token operator">*</span><span class="token number">2</span>
+<span class="token keyword">WHEN</span> <span class="token number">50</span> <span class="token keyword">THEN</span> salary<span class="token operator">*</span><span class="token number">3</span>
+<span class="token keyword">WHEN</span> <span class="token number">60</span> <span class="token keyword">THEN</span> salary<span class="token operator">*</span><span class="token number">4</span>
+<span class="token keyword">ELSE</span> salary
+<span class="token keyword">END</span>  newSalary
+<span class="token keyword">FROM</span> employees<span class="token punctuation">;</span>
+
+
+②情况<span class="token number">2</span>：类似于多重<span class="token keyword">IF</span>语句，实现区间判断
+<span class="token keyword">CASE</span> 
+<span class="token keyword">WHEN</span> 条件<span class="token number">1</span> <span class="token keyword">THEN</span> 结果<span class="token number">1</span>
+<span class="token keyword">WHEN</span> 条件<span class="token number">2</span> <span class="token keyword">THEN</span> 结果<span class="token number">2</span>
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+
+<span class="token keyword">ELSE</span> 结果n
+
+<span class="token keyword">END</span>
+
+案例：如果工资<span class="token operator">></span><span class="token number">20000</span><span class="token punctuation">,</span>显示级别A
+      工资<span class="token operator">></span><span class="token number">15000</span><span class="token punctuation">,</span>显示级别B
+      工资<span class="token operator">></span><span class="token number">10000</span><span class="token punctuation">,</span>显示级别C
+      否则，显示D
+      
+ <span class="token keyword">SELECT</span> salary<span class="token punctuation">,</span>
+ <span class="token keyword">CASE</span> 
+ <span class="token keyword">WHEN</span> salary<span class="token operator">></span><span class="token number">20000</span> <span class="token keyword">THEN</span> <span class="token string">'A'</span>
+ <span class="token keyword">WHEN</span> salary<span class="token operator">></span><span class="token number">15000</span> <span class="token keyword">THEN</span> <span class="token string">'B'</span>
+ <span class="token keyword">WHEN</span> salary<span class="token operator">></span><span class="token number">10000</span> <span class="token keyword">THEN</span> <span class="token string">'C'</span>
+ <span class="token keyword">ELSE</span> <span class="token string">'D'</span>
+ <span class="token keyword">END</span>
+ <span class="token keyword">AS</span>  a
+ <span class="token keyword">FROM</span> employees<span class="token punctuation">;</span>   
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h4 id="5-4-2-分组函数"><a href="#5-4-2-分组函数" class="headerlink" title="5.4.2 分组函数"></a>5.4.2 分组函数</h4><ul>
+<li><p>说明：分组函数往往用于实现将一组数据进行统计计算，最终得到一个值，又称为聚合函数或统计函数</p>
+</li>
+<li><p>分组函数清单：</p>
+<pre><code>`sum`(字段名)：求和
+`avg`(字段名)：求平均数
+`max`(字段名)：求最大值
+`min`(字段名)：求最小值
+`count`(字段名)：计算非空字段值的个数</code></pre>
+</li>
+<li><p>特点：</p>
+<pre><code>1、`sum`、`avg`一般用于处理数值型，`max`、`min`、`count`可以处理任何类型
+2、以为分组函数都忽略null值
+3、可以和`distinct`搭配实现去重的运算
+4、一般使用`count(*)`用作统计函数
+5、和分组函数一同查询的字段要求是`group by`后的字段    </code></pre>
+</li>
+</ul>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">#案例1 ：查询员工信息表中，所有员工的工资和、工资平均值、最低工资、最高工资、有工资的个数</span>
+<span class="token keyword">SELECT</span> <span class="token function">SUM</span><span class="token punctuation">(</span>salary<span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token function">AVG</span><span class="token punctuation">(</span>salary<span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token function">MIN</span><span class="token punctuation">(</span>salary<span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token function">MAX</span><span class="token punctuation">(</span>salary<span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token function">COUNT</span><span class="token punctuation">(</span>salary<span class="token punctuation">)</span> <span class="token keyword">FROM</span> employees<span class="token punctuation">;</span>
+
+<span class="token comment">#案例2：添加筛选条件</span>
+	<span class="token comment">#①查询emp表中记录数：</span>
+	<span class="token keyword">SELECT</span> <span class="token function">COUNT</span><span class="token punctuation">(</span>employee_id<span class="token punctuation">)</span> <span class="token keyword">FROM</span> employees<span class="token punctuation">;</span>
+
+	<span class="token comment">#②查询emp表中有佣金的人数：</span>
+	<span class="token keyword">SELECT</span> <span class="token function">COUNT</span><span class="token punctuation">(</span>salary<span class="token punctuation">)</span> <span class="token keyword">FROM</span> employees<span class="token punctuation">;</span>
+	
+	<span class="token comment">#③查询emp表中月薪大于2500的人数：</span>
+	<span class="token keyword">SELECT</span> <span class="token function">COUNT</span><span class="token punctuation">(</span>salary<span class="token punctuation">)</span> <span class="token keyword">FROM</span> employees <span class="token keyword">WHERE</span> salary<span class="token operator">></span><span class="token number">2500</span><span class="token punctuation">;</span>
+
+	<span class="token comment">#④查询有领导的人数：</span>
+	<span class="token keyword">SELECT</span> <span class="token function">COUNT</span><span class="token punctuation">(</span>manager_id<span class="token punctuation">)</span> <span class="token keyword">FROM</span> employees<span class="token punctuation">;</span>
+		
+<span class="token comment">#count的补充介绍★ </span>
+<span class="token comment">#1、统计结果集的行数，推荐使用count(*)	</span>
+<span class="token keyword">SELECT</span> <span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">FROM</span> employees<span class="token punctuation">;</span>
+<span class="token keyword">SELECT</span> <span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">FROM</span> employees <span class="token keyword">WHERE</span> department_id <span class="token operator">=</span> <span class="token number">30</span><span class="token punctuation">;</span>
+
+<span class="token keyword">SELECT</span> <span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token keyword">FROM</span> employees<span class="token punctuation">;</span>
+<span class="token keyword">SELECT</span> <span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token keyword">FROM</span> employees <span class="token keyword">WHERE</span> department_id <span class="token operator">=</span> <span class="token number">30</span><span class="token punctuation">;</span>
+
+<span class="token comment">#2、搭配distinct实现去重的统计</span>
+<span class="token comment">#案例：查询有员工的部门个数</span>
+<span class="token keyword">SELECT</span> <span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token keyword">DISTINCT</span> department_id<span class="token punctuation">)</span> <span class="token keyword">FROM</span> employees<span class="token punctuation">;</span>
+
+<span class="token comment">#思考：每个部门的总工资、平均工资？</span>
+<span class="token keyword">SELECT</span> <span class="token function">SUM</span><span class="token punctuation">(</span>salary<span class="token punctuation">)</span>  <span class="token keyword">FROM</span> employees <span class="token keyword">WHERE</span> department_id <span class="token operator">=</span> <span class="token number">30</span><span class="token punctuation">;</span>
+<span class="token keyword">SELECT</span> <span class="token function">SUM</span><span class="token punctuation">(</span>salary<span class="token punctuation">)</span>  <span class="token keyword">FROM</span> employees <span class="token keyword">WHERE</span> department_id <span class="token operator">=</span> <span class="token number">50</span><span class="token punctuation">;</span>
+
+<span class="token keyword">SELECT</span> <span class="token function">SUM</span><span class="token punctuation">(</span>salary<span class="token punctuation">)</span> <span class="token punctuation">,</span>department_id
+<span class="token keyword">FROM</span> employees
+<span class="token keyword">GROUP</span> <span class="token keyword">BY</span> department_id<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://github.com/hxf233333/about">hxf233333</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://github.com/hxf233333/2021/02/26/MySQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-day3/">https://github.com/hxf233333/2021/02/26/MySQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-day3/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  
+  <div class="nav-item-next">
+    <a href="/2021/02/25/MySQL学习笔记-day2/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">MySQL学习笔记_day2 </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content comment-card" style="margin-top: 16px;">
+  <div class="comment-card-title">评论</div>
+  
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'qSMgf1fUe5ctohg1Qpgumrxo-gzGzoHsz',
+        appKey: 'W0FMWg3H2Gt8l8rYPK61HDKD',
+        placeholder: 'Just go go',
+        path: window.location.pathname,
+        avatar: 'mp',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        serverURLs: 'https://console.leancloud.cn',
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-%E5%B8%B8%E8%A7%81%E5%87%BD%E6%95%B0"><span class="toc-text">5.4 常见函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-4-1-%E5%8D%95%E8%A1%8C%E5%87%BD%E6%95%B0"><span class="toc-text">5.4.1 单行函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-4-2-%E5%88%86%E7%BB%84%E5%87%BD%E6%95%B0"><span class="toc-text">5.4.2 分组函数</span></a></li></ol></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/hxf233333.png" class="author-img">
+
+<p class="author-name">hxf233333</p>
+<p class="author-description">make a dream</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>7</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>4</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>3</span>
+    <span>标签</span>
+  </a>
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-%E5%B8%B8%E8%A7%81%E5%87%BD%E6%95%B0"><span class="toc-text">5.4 常见函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-4-1-%E5%8D%95%E8%A1%8C%E5%87%BD%E6%95%B0"><span class="toc-text">5.4.1 单行函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-4-2-%E5%88%86%E7%BB%84%E5%87%BD%E6%95%B0"><span class="toc-text">5.4.2 分组函数</span></a></li></ol></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/学习笔记">
+        <div class="categories-list-item">
+          学习笔记
+          <span class="categories-list-item-badge">3</span>
+        </div>
+      </a>
+    
+      <a href="/categories/思维导图">
+        <div class="categories-list-item">
+          思维导图
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/搭建环境">
+        <div class="categories-list-item">
+          搭建环境
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/教程">
+        <div class="categories-list-item">
+          教程
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\MySQL" title="MySQL"><div class="tags-list-item">MySQL</div></a>
+    
+    <a href="\tags\教程" title="教程"><div class="tags-list-item">教程</div></a>
+    
+    <a href="\tags\Linux" title="Linux"><div class="tags-list-item">Linux</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-%E5%B8%B8%E8%A7%81%E5%87%BD%E6%95%B0"><span class="toc-text">5.4 常见函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-4-1-%E5%8D%95%E8%A1%8C%E5%87%BD%E6%95%B0"><span class="toc-text">5.4.1 单行函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-4-2-%E5%88%86%E7%BB%84%E5%87%BD%E6%95%B0"><span class="toc-text">5.4.2 分组函数</span></a></li></ol></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-02-26</div>
+        <a href="/2021/02/26/MySQL学习笔记-day3/"><div class="recent-posts-item-content">MySQL学习笔记-day3</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-02-25</div>
+        <a href="/2021/02/25/MySQL学习笔记-day2/"><div class="recent-posts-item-content">MySQL学习笔记_day2</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-02-24</div>
+        <a href="/2021/02/24/MySQL学习笔记-day1/"><div class="recent-posts-item-content">MySQL学习笔记_day1</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-02-21</div>
+        <a href="/2021/02/21/安装MySQL/"><div class="recent-posts-item-content">安装MySQL</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">hxf233333 </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>
