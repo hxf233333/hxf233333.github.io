@@ -239,30 +239,48 @@
   </header>
   <div id="section" class="post-content">
     <h3 id="5-5-分组查询"><a href="#5-5-分组查询" class="headerlink" title="5.5 分组查询"></a>5.5 分组查询</h3><ul>
-<li><p>语法：</p>
+<li>语法：</li>
+</ul>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">select</span> 查询列表
 <span class="token keyword">from</span> 表名
 <span class="token keyword">where</span> 筛选条件
 <span class="token keyword">group</span> <span class="token keyword">by</span> 分组列表
 <span class="token keyword">having</span> 分组后筛选
-<span class="token keyword">order</span> <span class="token keyword">by</span> 排序列表<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
-<li><p>执行顺序：</p>
-</li>
+<span class="token keyword">order</span> <span class="token keyword">by</span> 排序列表<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li>执行顺序：</li>
 </ul>
-<div class="post-note note-danger"><p>①<code>from</code>子句<br>②<code>where</code>子句<br>③<code>group by</code> 子句<br>④<code>having</code>子句<br>⑤<code>select</code>子句<br>⑥<code>order by</code>子句</p></div>
+<div class="post-note note-danger"><p>①from子句<br>②where子句<br>③group by 子句<br>④having子句<br>⑤select子句<br>⑥order by子句</p></div>
 
 <ul>
 <li><p>特点：</p>
-<p>​    ①查询列表往往是分组函数和被分组的字段 ★</p>
-<p>​    ②分组查询中的筛选分为两类</p>
+<p>①查询列表往往是分组函数和被分组的字段 ★</p>
+<p>②分组查询中的筛选分为两类</p>
 </li>
 </ul>
-<blockquote>
-<p>  ​                    筛选的基表                使用的关键词                位置</p>
-<p>分组前筛选        原始表                         where                group by 的前面</p>
-<p>组后筛选        分组后的结果集              having                group by的后面</p>
-<p>where——group by ——having</p>
-</blockquote>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">筛选的基表</th>
+<th align="center">使用的关键词</th>
+<th align="center">位置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">分组前筛选</td>
+<td align="center">原始表</td>
+<td align="center">where</td>
+<td align="center">group by 的前面</td>
+</tr>
+<tr>
+<td align="center">组后筛选</td>
+<td align="center">分组后的结果集</td>
+<td align="center">having</td>
+<td align="center">group by的后面</td>
+</tr>
+</tbody></table>
+<p><code>where——group by ——having</code></p>
 <ul>
 <li>问题：==分组函数做条件只可能放在having后面==！！！</li>
 </ul>
@@ -377,10 +395,27 @@
 <ul>
 <li>分类：</li>
 </ul>
-<div class="post-note note-danger"><p>  按年代分类：<br> 1、sql92标准:仅仅支持内连接</p><p>​        内连接：<br>              等值连接<br>              非等值连接<br>              自连接</p><p> 2、sql99标准【推荐】：支持内连接+外连接（左外和右外）+交叉连接</p><p>  按功能分类：<br>          内连接：<br>              等值连接<br>              非等值连接<br>              自连接<br>          外连接：<br>              左外连接<br>              右外连接<br>              全外连接<br>          交叉连接</p></div>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">按年代分类：
+<span class="token number">1</span>、sql92标准:仅仅支持内连接
+内连接：
+	等值连接
+	非等值连接
+	自连接
 
+<span class="token number">2</span>、sql99标准【推荐】：支持内连接<span class="token operator">+</span>外连接（左外和右外）<span class="token operator">+</span>交叉连接
+按功能分类：
+	内连接：
+		等值连接
+		非等值连接
+		自连接
+	外连接：
+		左外连接
+		右外连接
+		全外连接
+	交叉连接<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h4 id="5-6-1-SQL-92标准"><a href="#5-6-1-SQL-92标准" class="headerlink" title="5.6.1 SQL 92标准"></a>5.6.1 SQL 92标准</h4><ul>
-<li><p>语法:</p>
+<li>语法:</li>
+</ul>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">select</span> 查询列表
 <span class="token keyword">from</span> 表<span class="token number">1</span> 别名<span class="token punctuation">,</span>表<span class="token number">2</span> 别名
 <span class="token keyword">where</span> 连接条件
@@ -388,12 +423,9 @@
 <span class="token keyword">group</span> <span class="token keyword">by</span> 分组列表
 <span class="token keyword">having</span> 分组后筛选
 <span class="token keyword">order</span> <span class="token keyword">by</span> 排序列表<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-</li>
-</ul>
 <ul>
-<li><p>执行顺序：</p>
+<li>执行顺序：</li>
+</ul>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token number">1</span>、<span class="token keyword">from</span>子句
 <span class="token number">2</span>、<span class="token keyword">where</span>子句
 <span class="token number">3</span>、<span class="token operator">and</span>子句
@@ -403,8 +435,6 @@
 <span class="token number">7</span>、<span class="token keyword">order</span> <span class="token keyword">by</span>子句<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 
-</li>
-</ul>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">#---------------------------------sql92标准------------------</span>
 <span class="token comment">#一、内连接</span>
 
@@ -650,13 +680,25 @@
 </article>
 <div class="nav">
   
+  <div class="nav-item-prev">
+    <a href="/2021/02/28/MySQL学习笔记_day5/" class="nav-link">
+      <i class="iconfont icon-left nav-prev-icon"></i>
+      <div>
+        <div class="nav-label">上一篇</div>
+        
+        <div class="nav-title">MySQL学习笔记_day5 </div>
+        
+      </div>
+    </a>
+  </div>
+  
   
   <div class="nav-item-next">
     <a href="/2021/02/26/MySQL学习笔记_day3/" class="nav-link">
       <div>
         <div class="nav-label">下一篇</div>
         
-        <div class="nav-title">MySQL学习笔记-day3 </div>
+        <div class="nav-title">MySQL学习笔记_day3 </div>
         
       </div>
       <i class="iconfont icon-right nav-next-icon"></i>
@@ -715,7 +757,7 @@
 <p class="author-description">make a dream</p>
 <div class="author-message">
   <a class="author-posts-count" href="/archives">
-    <span>8</span>
+    <span>9</span>
     <span>文章</span>
   </a>
   <a class="author-categories-count" href="/categories">
@@ -749,13 +791,13 @@
       <a href="/categories/学习笔记">
         <div class="categories-list-item">
           学习笔记
-          <span class="categories-list-item-badge">4</span>
+          <span class="categories-list-item-badge">5</span>
         </div>
       </a>
     
-      <a href="/categories/思维导图">
+      <a href="/categories/教程">
         <div class="categories-list-item">
-          思维导图
+          教程
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
@@ -767,9 +809,9 @@
         </div>
       </a>
     
-      <a href="/categories/教程">
+      <a href="/categories/思维导图">
         <div class="categories-list-item">
-          教程
+          思维导图
           <span class="categories-list-item-badge">1</span>
         </div>
       </a>
@@ -785,9 +827,9 @@
     
     <a href="\tags\MySQL" title="MySQL"><div class="tags-list-item">MySQL</div></a>
     
-    <a href="\tags\教程" title="教程"><div class="tags-list-item">教程</div></a>
-    
     <a href="\tags\Linux" title="Linux"><div class="tags-list-item">Linux</div></a>
+    
+    <a href="\tags\教程" title="教程"><div class="tags-list-item">教程</div></a>
     
   </div>
 </div>
@@ -812,23 +854,23 @@
   <div class="recent-posts-list">
     
       <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-02-28</div>
+        <a href="/2021/02/28/MySQL学习笔记_day5/"><div class="recent-posts-item-content">MySQL学习笔记_day5</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
         <div class="recent-posts-item-title">2021-02-27</div>
         <a href="/2021/02/27/MySQL学习笔记_day4/"><div class="recent-posts-item-content">MySQL学习笔记_day4</div></a>
       </div>
     
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2021-02-26</div>
-        <a href="/2021/02/26/MySQL学习笔记_day3/"><div class="recent-posts-item-content">MySQL学习笔记-day3</div></a>
+        <a href="/2021/02/26/MySQL学习笔记_day3/"><div class="recent-posts-item-content">MySQL学习笔记_day3</div></a>
       </div>
     
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2021-02-25</div>
         <a href="/2021/02/25/MySQL学习笔记_day2/"><div class="recent-posts-item-content">MySQL学习笔记_day2</div></a>
-      </div>
-    
-      <div class="recent-posts-item">
-        <div class="recent-posts-item-title">2021-02-24</div>
-        <a href="/2021/02/24/MySQL学习笔记_day1/"><div class="recent-posts-item-content">MySQL学习笔记_day1</div></a>
       </div>
     
   </div>
