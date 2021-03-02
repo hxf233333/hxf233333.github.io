@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html  lang="zh-CN" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="无情">
+  <link rel="icon" href="/img/hxf233333.png">
+  <title>MySQL学习笔记_day7</title>
+  
+  
+  <meta property="og:title" content="MySQL学习笔记_day7">
+  
+  
+  <meta property="og:url" content="https://hxf233333.gitee.io/2021/03/02/MySQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0_day7/index.html">
+  
+  
+  <meta property="og:img" content="/img/hxf233333.png">
+  
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2021-03-02">
+  <meta property="og:article:modified_time" content="2021-03-02">
+  <meta property="og:article:author" content="hxf233333">
+  
+  
+  <meta property="og:article:tag" content="MySQL">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+  
+  
+  <link href="/js/lib/prism/prism.min.css" rel="stylesheet" data-prism="prism">
+  
+  
+  
+<link rel="stylesheet" href="/js/lib/prism/prism-line-numbers.min.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 5.3.0"><link rel="alternate" href="/atom.xml" title="无情" type="application/atom+xml">
+</head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/hxf233333.png" alt="logo">
+      
+      <span class="navbar-logo-dsc">hxf233333</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    首页
+    
+    </a>
+    
+    <a href="/archives" class="navbar-menu-item">
+    
+    归档
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于
+    
+    </a>
+    
+    <a href="/links" class="navbar-menu-item">
+    
+    友链
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      MySQL学习笔记_day7
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2021-03-02T12:17:49.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2021-03-02</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/学习笔记/" class="post-meta-link">学习笔记</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>906 字</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/MySQL/" class="post-meta-link">MySQL</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <h2 id="7-DDL语言"><a href="#7-DDL语言" class="headerlink" title="7 DDL语言"></a>7 DDL语言</h2><ul>
+<li>Data Define Language数据定义语言 ：用于对数据库和表的管理和操作</li>
+</ul>
+<h3 id="7-1-库和表的管理"><a href="#7-1-库和表的管理" class="headerlink" title="7.1 库和表的管理"></a>7.1 库和表的管理</h3><blockquote>
+<p>1.库的管理<br>创建、修改、删除<br>2、表弟管理<br>创建、修改、删除</p>
+<p>创建：create<br>修改：alter<br>删除：drop</p>
+</blockquote>
+<h4 id="7-1-1-库的管理"><a href="#7-1-1-库的管理" class="headerlink" title="7.1.1 库的管理"></a>7.1.1 库的管理</h4><pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">#---------------------------库的管理------------------------√</span>
+
+<span class="token comment">#一、创建数据库</span>
+<span class="token keyword">CREATE</span> <span class="token keyword">DATABASE</span> stuDB<span class="token punctuation">;</span>
+<span class="token keyword">CREATE</span> <span class="token keyword">DATABASE</span> <span class="token keyword">IF</span> <span class="token operator">NOT</span> <span class="token keyword">EXISTS</span> stuDB<span class="token punctuation">;</span>
+
+<span class="token comment">#二、库的修改</span>
+<span class="token keyword">RENAME</span> <span class="token keyword">DATABASE</span> books <span class="token keyword">TO</span> 新库名<span class="token punctuation">;</span>
+<span class="token keyword">ALTER</span> <span class="token keyword">DATABASE</span> books <span class="token keyword">CHARACTER</span> <span class="token keyword">SET</span> gbk<span class="token punctuation">;</span> <span class="token comment">#更改库的字符集</span>
+
+<span class="token comment">#三、删除数据库</span>
+<span class="token keyword">DROP</span> <span class="token keyword">DATABASE</span> stuDB<span class="token punctuation">;</span>
+<span class="token keyword">DROP</span> <span class="token keyword">DATABASE</span> <span class="token keyword">IF</span> <span class="token keyword">EXISTS</span> stuDB<span class="token punctuation">;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h4 id="7-1-2-表的管理"><a href="#7-1-2-表的管理" class="headerlink" title="7.1.2 表的管理"></a>7.1.2 表的管理</h4><p>一、创建表 ★</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">语法：
+<span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> <span class="token punctuation">[</span><span class="token keyword">IF</span> <span class="token operator">NOT</span> <span class="token keyword">EXISTS</span><span class="token punctuation">]</span> 表名<span class="token punctuation">(</span>
+	字段名  字段类型  【字段约束】<span class="token punctuation">,</span>
+	字段名  字段类型  【字段约束】<span class="token punctuation">,</span>
+	字段名  字段类型  【字段约束】<span class="token punctuation">,</span>
+	字段名  字段类型  【字段约束】<span class="token punctuation">,</span>
+	字段名  字段类型  【字段约束】
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+案例：没有添加约束
+<span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> <span class="token keyword">IF</span> <span class="token operator">NOT</span> <span class="token keyword">EXISTS</span> stuinfo<span class="token punctuation">(</span>
+	stuid <span class="token keyword">INT</span> <span class="token punctuation">,</span>
+	stuname <span class="token keyword">VARCHAR</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+	stugender <span class="token keyword">CHAR</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+	email <span class="token keyword">VARCHAR</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+	borndate <span class="token keyword">DATETIME</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+案例：添加约束（通用写法）
+<span class="token keyword">DROP</span> <span class="token keyword">TABLE</span> <span class="token keyword">IF</span> <span class="token keyword">EXISTS</span> stuinfo<span class="token punctuation">;</span>
+<span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> <span class="token keyword">IF</span> <span class="token operator">NOT</span> <span class="token keyword">EXISTS</span> stuinfo<span class="token punctuation">(</span>
+	stuid <span class="token keyword">INT</span> <span class="token keyword">PRIMARY</span> <span class="token keyword">KEY</span><span class="token punctuation">,</span><span class="token comment">#添加了主键约束</span>
+	stuname <span class="token keyword">VARCHAR</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span> <span class="token keyword">UNIQUE</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span><span class="token comment">#添加了唯一约束+非空</span>
+	stugender <span class="token keyword">CHAR</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token keyword">DEFAULT</span> <span class="token string">'男'</span><span class="token punctuation">,</span><span class="token comment">#添加了默认约束</span>
+	email <span class="token keyword">VARCHAR</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">,</span>
+	age <span class="token keyword">INT</span> <span class="token keyword">CHECK</span><span class="token punctuation">(</span> age <span class="token operator">BETWEEN</span> <span class="token number">0</span> <span class="token operator">AND</span> <span class="token number">100</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token comment">#添加了检查约束，mysql不支持</span>
+	majorid <span class="token keyword">INT</span><span class="token punctuation">,</span>
+	<span class="token keyword">CONSTRAINT</span> fk_stuinfo_major <span class="token keyword">FOREIGN</span> <span class="token keyword">KEY</span> <span class="token punctuation">(</span>majorid<span class="token punctuation">)</span> <span class="token keyword">REFERENCES</span> major<span class="token punctuation">(</span>id<span class="token punctuation">)</span><span class="token comment">#添加了外键约束</span>
+<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>二、修改表[了解]</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">语法：<span class="token keyword">ALTER</span> <span class="token keyword">TABLE</span> 表名 <span class="token keyword">ADD</span><span class="token operator">|</span><span class="token keyword">MODIFY</span><span class="token operator">|</span>CHANGE<span class="token operator">|</span><span class="token keyword">DROP</span> <span class="token keyword">COLUMN</span> 字段名 字段类型 【字段约束】<span class="token punctuation">;</span>
+
+<span class="token comment">#1.修改表名</span>
+<span class="token keyword">ALTER</span> <span class="token keyword">TABLE</span> stuinfo <span class="token keyword">RENAME</span> <span class="token keyword">TO</span> students<span class="token punctuation">;</span>
+
+<span class="token comment">#2.添加字段</span>
+<span class="token keyword">ALTER</span> <span class="token keyword">TABLE</span> students <span class="token keyword">ADD</span> <span class="token keyword">COLUMN</span> borndate <span class="token keyword">TIMESTAMP</span> <span class="token operator">NOT</span> <span class="token boolean">NULL</span><span class="token punctuation">;</span>
+<span class="token keyword">DESC</span> students<span class="token punctuation">;</span>
+
+<span class="token comment">#3.修改字段名</span>
+<span class="token keyword">ALTER</span> <span class="token keyword">TABLE</span> students CHANGE <span class="token keyword">COLUMN</span> borndate birthday <span class="token keyword">DATETIME</span> <span class="token boolean">NULL</span><span class="token punctuation">;</span>
+
+<span class="token comment">#4.修改字段类型</span>
+<span class="token keyword">ALTER</span> <span class="token keyword">TABLE</span>  students <span class="token keyword">MODIFY</span> <span class="token keyword">COLUMN</span> birthday <span class="token keyword">TIMESTAMP</span> <span class="token punctuation">;</span>
+
+<span class="token comment">#5.删除字段</span>
+<span class="token keyword">ALTER</span> <span class="token keyword">TABLE</span> students <span class="token keyword">DROP</span> <span class="token keyword">COLUMN</span> birthday<span class="token punctuation">;</span>
+<span class="token keyword">DESC</span> students<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>三、删除表 √</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">DROP</span> <span class="token keyword">TABLE</span> <span class="token keyword">IF</span> <span class="token keyword">EXISTS</span> students<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>四、复制表√</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">#仅仅复制表的结构</span>
+<span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> newTable2 <span class="token operator">LIKE</span> major<span class="token punctuation">;</span>
+
+<span class="token comment">#复制表的结构+数据</span>
+<span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> newTable3 <span class="token keyword">SELECT</span> <span class="token operator">*</span> <span class="token keyword">FROM</span> girls<span class="token punctuation">.</span><span class="token punctuation">`</span>beauty<span class="token punctuation">`</span><span class="token punctuation">;</span>
+
+<span class="token comment">#案例：复制employees表中的last_name,department_id,salary字段到新表 emp表，但不复制数据</span>
+<span class="token keyword">CREATE</span> <span class="token keyword">TABLE</span> emp 
+<span class="token keyword">SELECT</span> last_name<span class="token punctuation">,</span>department_id<span class="token punctuation">,</span>salary 
+<span class="token keyword">FROM</span> myemployees<span class="token punctuation">.</span><span class="token punctuation">`</span>employees<span class="token punctuation">`</span>
+<span class="token keyword">WHERE</span> <span class="token number">1</span><span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="7-2-数据类型"><a href="#7-2-数据类型" class="headerlink" title="7.2 数据类型"></a>7.2 数据类型</h3><pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token number">1</span>、整型
+<span class="token keyword">TINYINT</span> <span class="token keyword">SMALLINT</span>  <span class="token keyword">INT</span>  <span class="token keyword">BIGINT</span> 
+
+<span class="token number">2</span>、浮点型
+<span class="token keyword">FLOAT</span><span class="token punctuation">(</span>m<span class="token punctuation">,</span>n<span class="token punctuation">)</span>
+<span class="token keyword">DOUBLE</span><span class="token punctuation">(</span>m<span class="token punctuation">,</span>n<span class="token punctuation">)</span> 
+<span class="token keyword">DECIMAL</span><span class="token punctuation">(</span>m<span class="token punctuation">,</span>n<span class="token punctuation">)</span>
+m:整数部位长度<span class="token operator">+</span>小数部位长度
+n:小数部位长度
+m和n可选
+
+<span class="token number">3</span>、字符型
+<span class="token keyword">CHAR</span><span class="token punctuation">(</span>n<span class="token punctuation">)</span>:n可选
+<span class="token keyword">VARCHAR</span><span class="token punctuation">(</span>n<span class="token punctuation">)</span>：n必选 
+<span class="token keyword">TEXT</span> 
+<span class="token keyword">ENUM</span>
+<span class="token keyword">SET</span>
+n表示最多字符个数
+
+<span class="token number">4</span>、日期型
+<span class="token keyword">DATE</span> <span class="token keyword">TIME</span>  <span class="token keyword">DATETIME</span> <span class="token keyword">TIMESTAMP</span>
+
+<span class="token number">5</span>、二进制型
+<span class="token keyword">BLOB</span> 存储图片数据<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="7-3-常见约束"><a href="#7-3-常见约束" class="headerlink" title="7.3 常见约束"></a>7.3 常见约束</h3><ul>
+<li>说明：用于限制表中字段的数据的，从而进一步保证数据表的数据是一致的、准确的、可靠的！</li>
+</ul>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token operator">NOT</span> <span class="token boolean">NULL</span> 非空：用于限制该字段为必填项<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">DEFAULT</span> 默认：用于限制该字段没有显式插入值，则直接显式默认值<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<pre class="line-numbers language-none"><code class="language-none">PRIMARY KEY 主键：用于限制该字段值不能重复，设置为主键列的字段默认不能为空
+	一个表只能有一个主键，当然可以是组合主键<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-none"><code class="language-none">UNIQUE 唯一：用于限制该字段值不能重复
+		字段是否可以为空   一个表可以有几个
+		
+	主键	   ×				1个
+	唯一     √				n个<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-none"><code class="language-none">CHECK检查：用于限制该字段值必须满足指定条件
+	CHECK(age BETWEEN 1 AND 100)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">FOREIGN</span> <span class="token keyword">KEY</span> 外键:用于限制两个表的关系<span class="token punctuation">,</span>要求外键列的值必须来自于主表的关联列
+	要求：
+	①主表的关联列和从表的关联列的类型必须一致，意思一样，名称无要求
+	②主表的关联列要求必须是主键
+	③插入数据时，先插入主表，再插入从表
+	④删除数据时，先删除从表，再删除主表<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://hxf233333.gitee.io/about">hxf233333</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://hxf233333.gitee.io/2021/03/02/MySQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0_day7/">https://hxf233333.gitee.io/2021/03/02/MySQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0_day7/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  
+  <div class="nav-item-next">
+    <a href="/2021/03/01/MySQL学习笔记_day6/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">MySQL学习笔记_day6 </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content comment-card" style="margin-top: 16px;">
+  <div class="comment-card-title">评论</div>
+  
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'qSMgf1fUe5ctohg1Qpgumrxo-gzGzoHsz',
+        appKey: 'W0FMWg3H2Gt8l8rYPK61HDKD',
+        placeholder: 'Just go go',
+        path: window.location.pathname,
+        avatar: 'mp',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        serverURLs: 'https://console.leancloud.cn',
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#7-DDL%E8%AF%AD%E8%A8%80"><span class="toc-text">7 DDL语言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E5%BA%93%E5%92%8C%E8%A1%A8%E7%9A%84%E7%AE%A1%E7%90%86"><span class="toc-text">7.1 库和表的管理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-1-1-%E5%BA%93%E7%9A%84%E7%AE%A1%E7%90%86"><span class="toc-text">7.1.1 库的管理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-1-2-%E8%A1%A8%E7%9A%84%E7%AE%A1%E7%90%86"><span class="toc-text">7.1.2 表的管理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-text">7.2 数据类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-%E5%B8%B8%E8%A7%81%E7%BA%A6%E6%9D%9F"><span class="toc-text">7.3 常见约束</span></a></li></ol></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/hxf233333.png" class="author-img">
+
+<p class="author-name">hxf233333</p>
+<p class="author-description">make a dream</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>11</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>4</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>3</span>
+    <span>标签</span>
+  </a>
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#7-DDL%E8%AF%AD%E8%A8%80"><span class="toc-text">7 DDL语言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E5%BA%93%E5%92%8C%E8%A1%A8%E7%9A%84%E7%AE%A1%E7%90%86"><span class="toc-text">7.1 库和表的管理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-1-1-%E5%BA%93%E7%9A%84%E7%AE%A1%E7%90%86"><span class="toc-text">7.1.1 库的管理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-1-2-%E8%A1%A8%E7%9A%84%E7%AE%A1%E7%90%86"><span class="toc-text">7.1.2 表的管理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-text">7.2 数据类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-%E5%B8%B8%E8%A7%81%E7%BA%A6%E6%9D%9F"><span class="toc-text">7.3 常见约束</span></a></li></ol></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/学习笔记">
+        <div class="categories-list-item">
+          学习笔记
+          <span class="categories-list-item-badge">7</span>
+        </div>
+      </a>
+    
+      <a href="/categories/思维导图">
+        <div class="categories-list-item">
+          思维导图
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/教程">
+        <div class="categories-list-item">
+          教程
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/搭建环境">
+        <div class="categories-list-item">
+          搭建环境
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\MySQL" title="MySQL"><div class="tags-list-item">MySQL</div></a>
+    
+    <a href="\tags\教程" title="教程"><div class="tags-list-item">教程</div></a>
+    
+    <a href="\tags\Linux" title="Linux"><div class="tags-list-item">Linux</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#7-DDL%E8%AF%AD%E8%A8%80"><span class="toc-text">7 DDL语言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E5%BA%93%E5%92%8C%E8%A1%A8%E7%9A%84%E7%AE%A1%E7%90%86"><span class="toc-text">7.1 库和表的管理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-1-1-%E5%BA%93%E7%9A%84%E7%AE%A1%E7%90%86"><span class="toc-text">7.1.1 库的管理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-1-2-%E8%A1%A8%E7%9A%84%E7%AE%A1%E7%90%86"><span class="toc-text">7.1.2 表的管理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-text">7.2 数据类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-%E5%B8%B8%E8%A7%81%E7%BA%A6%E6%9D%9F"><span class="toc-text">7.3 常见约束</span></a></li></ol></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-02</div>
+        <a href="/2021/03/02/MySQL学习笔记_day7/"><div class="recent-posts-item-content">MySQL学习笔记_day7</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-01</div>
+        <a href="/2021/03/01/MySQL学习笔记_day6/"><div class="recent-posts-item-content">MySQL学习笔记_day6</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-02-28</div>
+        <a href="/2021/02/28/MySQL学习笔记_day5/"><div class="recent-posts-item-content">MySQL学习笔记_day5</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-02-27</div>
+        <a href="/2021/02/27/MySQL学习笔记_day4/"><div class="recent-posts-item-content">MySQL学习笔记_day4</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">hxf233333 </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>
