@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html  lang="zh-CN" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="无情">
+  <link rel="icon" href="/img/hxf233333.png">
+  <title>MySQL学习笔记_day9</title>
+  
+  
+  <meta property="og:title" content="MySQL学习笔记_day9">
+  
+  
+  <meta property="og:url" content="https://hxf233333.gitee.io/2021/03/05/MySQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0_day9/index.html">
+  
+  
+  <meta property="og:img" content="/img/hxf233333.png">
+  
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2021-03-05">
+  <meta property="og:article:modified_time" content="2021-03-05">
+  <meta property="og:article:author" content="hxf233333">
+  
+  
+  <meta property="og:article:tag" content="MySQL">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+  
+  
+  <link href="/js/lib/prism/prism.min.css" rel="stylesheet" data-prism="prism">
+  
+  
+  
+<link rel="stylesheet" href="/js/lib/prism/prism-line-numbers.min.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 5.3.0"><link rel="alternate" href="/atom.xml" title="无情" type="application/atom+xml">
+</head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/hxf233333.png" alt="logo">
+      
+      <span class="navbar-logo-dsc">hxf233333</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    首页
+    
+    </a>
+    
+    <a href="/archives" class="navbar-menu-item">
+    
+    归档
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于
+    
+    </a>
+    
+    <a href="/links" class="navbar-menu-item">
+    
+    友链
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      MySQL学习笔记_day9
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2021-03-05T08:58:54.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2021-03-05</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/学习笔记/" class="post-meta-link">学习笔记</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>1.5k 字</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/MySQL/" class="post-meta-link">MySQL</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <h2 id="10-变量"><a href="#10-变量" class="headerlink" title="10 变量"></a>10 变量</h2><ul>
+<li>系统变量：全局变量、会话变量</li>
+<li>自定义变量：用户变量、局部变量</li>
+</ul>
+<h3 id="10-1-系统变量"><a href="#10-1-系统变量" class="headerlink" title="10.1 系统变量"></a>10.1 系统变量</h3><ul>
+<li>说明：变量由系统提供，不是用户定义，属于服务器层面</li>
+</ul>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token number">1</span>、查看所有的系统变量
+<span class="token keyword">SHOW</span> <span class="token keyword">GLOBAL</span> <span class="token operator">|</span> <span class="token punctuation">[</span><span class="token keyword">SESSION</span><span class="token punctuation">]</span> VARIABLES<span class="token punctuation">;</span>
+
+<span class="token number">2</span>、查看所有满足条件的部分系统变量
+<span class="token keyword">SHOW</span> <span class="token keyword">GLOBAL</span> <span class="token operator">|</span> <span class="token punctuation">[</span><span class="token keyword">SESSION</span><span class="token punctuation">]</span> VARIABLES <span class="token operator">LIKE</span> <span class="token string">'%char%'</span><span class="token punctuation">;</span>
+
+<span class="token number">3</span>、查看指定的某个系统变量的值
+<span class="token keyword">SELECT</span> @<span class="token variable">@global</span> <span class="token operator">|</span> <span class="token punctuation">[</span><span class="token keyword">SESSION</span><span class="token punctuation">]</span> <span class="token punctuation">.</span>系统变量名<span class="token punctuation">;</span>
+
+<span class="token number">4</span>、为某个系统变量赋值
+方式一：
+<span class="token keyword">SET</span> <span class="token keyword">GLOBAL</span> <span class="token operator">|</span> <span class="token punctuation">[</span><span class="token keyword">SESSION</span><span class="token punctuation">]</span> 系统变量名 <span class="token operator">=</span> 值<span class="token punctuation">;</span>
+
+方式二：
+<span class="token keyword">SET</span> @<span class="token variable">@global</span> <span class="token operator">|</span> <span class="token punctuation">[</span><span class="token keyword">SESSION</span><span class="token punctuation">]</span> <span class="token punctuation">.</span>系统变量名 <span class="token operator">=</span> 值<span class="token punctuation">;</span>
+
+注意：如果是全局级别，则需要加<span class="token keyword">GLOBAL</span>，如果是会话级别，则需要加<span class="token keyword">SESSION</span>，如果不写，则默认sesion <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="10-2-自定义变量"><a href="#10-2-自定义变量" class="headerlink" title="10.2 自定义变量"></a>10.2 自定义变量</h3><ul>
+<li>说明：变量是用户自定义的，不是由系统的</li>
+<li>使用步骤：声明、赋值、使用（查看，比较，运算等）</li>
+</ul>
+<h4 id="10-2-1-用户变量"><a href="#10-2-1-用户变量" class="headerlink" title="10.2.1 用户变量"></a>10.2.1 用户变量</h4><ul>
+<li><p>作用域：针对于当前会话（连续）有效，同于会话变量的作用域；应用在任何地方，也就是BEGIN END里面或者外面</p>
+</li>
+<li><p>赋值的操作符： =或:=</p>
+</li>
+</ul>
+<blockquote>
+<p>①声明并初始化</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SET</span> @用户变量名<span class="token operator">=</span>值；或
+<span class="token keyword">SET</span> @用户变量名:<span class="token operator">=</span>值；或
+<span class="token keyword">SELECT</span> @用户变量名:<span class="token operator">=</span>值<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>②赋值（更新用户变量的值）<br>方式一；通过SET或SELECT</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SET</span> @用户变量名<span class="token operator">=</span>值<span class="token punctuation">;</span>或
+<span class="token keyword">SET</span> @用户变量名:<span class="token operator">=</span>值<span class="token punctuation">;</span>或
+<span class="token keyword">SELECT</span> @用户变量名:<span class="token operator">=</span>值<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>方式二：通过SELECT INTO</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> 字段 <span class="token keyword">INTO</span> 变量名 <span class="token keyword">FROM</span> 表<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>③使用（查看用户变量的值）</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> @用户变量名<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+</blockquote>
+<h4 id="10-2-2-局部变量"><a href="#10-2-2-局部变量" class="headerlink" title="10.2.2 局部变量"></a>10.2.2 局部变量</h4><ul>
+<li>作用域：仅仅在定义它的BEGIN END中有效</li>
+</ul>
+<blockquote>
+<p>①声明</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">DECLARE</span> 变量名 类型<span class="token punctuation">;</span>
+<span class="token keyword">DECLARE</span> 变量名 类型 <span class="token keyword">DEFAULT</span> 值<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>②赋值<br>方式一；通过SET或SELECT</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SET</span> 局部变量名<span class="token operator">=</span>值<span class="token punctuation">;</span>或
+<span class="token keyword">SET</span> 局部变量名:<span class="token operator">=</span>值<span class="token punctuation">;</span>或
+<span class="token keyword">SELECT</span> @局部变量名:<span class="token operator">=</span>值<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>方式二：通过SELECT INTO</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> 字段 <span class="token keyword">INTO</span> 局部变量名 <span class="token keyword">FROM</span> 表<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>③使用</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> 局部变量名<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+</blockquote>
+<h2 id="11-存储过程和函数"><a href="#11-存储过程和函数" class="headerlink" title="11 存储过程和函数"></a>11 存储过程和函数</h2><ul>
+<li><p>存储过程和函数：类似于面向对象中的方法</p>
+</li>
+<li><p>好处：</p>
+</li>
+</ul>
+<blockquote>
+<p>1、提高代码的重用性</p>
+<p>2、简化操作</p>
+</blockquote>
+<h3 id="11-1-存储过程"><a href="#11-1-存储过程" class="headerlink" title="11.1 存储过程"></a>11.1 存储过程</h3><ul>
+<li>含义：一组预先编译好的SQL语句的集合，理解成批处理语句</li>
+</ul>
+<blockquote>
+<p>1、提高代码的重用性</p>
+<p>2、简化操作</p>
+<p>3、减少了编译次数并且减少了和数据库服务器的连接次数，提高了效率</p>
+</blockquote>
+<h4 id="11-1-1-创建语法"><a href="#11-1-1-创建语法" class="headerlink" title="11.1.1 创建语法"></a>11.1.1 创建语法</h4><blockquote>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">CREATE</span> <span class="token keyword">PROCEDURE</span> 存储过程名（参数列表）
+<span class="token keyword">BEGIN</span>
+存储过程体（一组合法的<span class="token keyword">SQL</span>语句）
+<span class="token keyword">END</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p><strong>注意：</strong></p>
+</blockquote>
+<blockquote>
+<p>1、参数列表包含三部分</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">参数模式 参数名 参数类型
+举例：
+<span class="token operator">IN</span> stuname <span class="token keyword">VARCHAR</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span>
+
+参数模式：
+<span class="token operator">IN</span>：该参数可以作为输入，也就是改参数需要方传入值
+<span class="token keyword">OUT</span>：该参数可以作为输出，也就是该参数可以作为返回值
+<span class="token keyword">INOUT</span>：该参数既可以作为输入又可以作为输出，也就是该参数既需要传入值，又可以返回值<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>2、如果存储过程体仅仅只有一句话，BEGIN END 可以省略</p>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">存储过程体中的每条<span class="token keyword">SQL</span>语句的结尾要求必须加分号。
+存储过程的结尾可以使用<span class="token keyword">DELIMITER</span>重新设置
+语法：
+<span class="token keyword">DELIMITER</span> 结束标记
+案例：
+<span class="token keyword">DELIMITER</span> $<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+</blockquote>
+<h4 id="11-1-2-调用语法"><a href="#11-1-2-调用语法" class="headerlink" title="11.1.2 调用语法"></a>11.1.2 调用语法</h4><pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">#1、空参列表</span>
+<span class="token comment">#案例：插入到admin表中3条记录</span>
+
+<span class="token keyword">SELECT</span> <span class="token operator">*</span> <span class="token keyword">FROM</span> admin<span class="token punctuation">;</span>
+
+<span class="token keyword">DELIMITER</span> $
+<span class="token keyword">CREATE</span> <span class="token keyword">PROCEDURE</span> myp1<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">BEGIN</span>
+	<span class="token keyword">INSERT</span> <span class="token keyword">INTO</span> amdin<span class="token punctuation">(</span>username<span class="token punctuation">,</span><span class="token string">'password'</span><span class="token punctuation">)</span>
+	<span class="token keyword">VALUES</span><span class="token punctuation">(</span><span class="token string">'john'</span><span class="token punctuation">,</span><span class="token string">'00000'</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token string">'lily'</span><span class="token punctuation">,</span><span class="token string">'00000'</span><span class="token punctuation">)</span><span class="token punctuation">(</span><span class="token string">'jack'</span><span class="token punctuation">,</span><span class="token string">'00000'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>	
+<span class="token keyword">END</span> $
+<span class="token comment">#调用</span>
+<span class="token keyword">CALL</span> myp1<span class="token punctuation">(</span><span class="token punctuation">)</span>$
+
+<span class="token comment">#2、创建带in模式参数的存储过程</span>
+<span class="token comment">#案列1：创建存储过程实现根据女生名，查询对应的男神信息</span>
+<span class="token keyword">CREATE</span> <span class="token keyword">PROCEDURE</span> myp2<span class="token punctuation">(</span><span class="token operator">IN</span> beautyName <span class="token keyword">VARCHAR</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">BEGIN</span>
+	<span class="token keyword">SELECT</span> bo<span class="token punctuation">.</span><span class="token operator">*</span> 
+	<span class="token keyword">FROM</span> boys bo
+	<span class="token keyword">RIGHT</span> <span class="token keyword">JOIN</span> beauty b <span class="token keyword">ON</span> bo<span class="token punctuation">.</span>id <span class="token operator">=</span> b<span class="token punctuation">.</span>boyfriend_id
+	<span class="token keyword">WHERE</span> b<span class="token punctuation">.</span>name <span class="token operator">=</span> beautyName<span class="token punctuation">;</span>
+<span class="token keyword">END</span> $
+<span class="token comment">#调用</span>
+<span class="token keyword">CALL</span> myp2<span class="token punctuation">(</span><span class="token string">'张飞'</span><span class="token punctuation">)</span>$
+
+<span class="token comment">#3、创建带out模式的存储过程</span>
+<span class="token comment">#案例：根据女神名，返回对应的男神名</span>
+<span class="token keyword">CREATE</span> <span class="token keyword">PROCEDURE</span> myp5<span class="token punctuation">(</span><span class="token operator">IN</span> beautyName <span class="token keyword">VARCHAR</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token keyword">OUT</span> boyName <span class="token keyword">VARCHAR</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword">BEGIN</span>
+	<span class="token keyword">SELECT</span> bo<span class="token punctuation">.</span>boyName <span class="token keyword">INTO</span> boyName
+	<span class="token keyword">FROM</span> boys bo
+	<span class="token keyword">INNER</span> <span class="token keyword">JOIN</span> beauty b <span class="token keyword">ON</span> bo<span class="token punctuation">.</span>id <span class="token operator">=</span> b<span class="token punctuation">.</span>boyfriend_id
+	<span class="token keyword">WHERE</span> b<span class="token punctuation">.</span>name <span class="token operator">=</span> beautyName<span class="token punctuation">;</span>
+<span class="token keyword">END</span> $
+<span class="token comment">#调用</span>
+<span class="token keyword">CALL</span> myp5<span class="token punctuation">(</span><span class="token string">'小昭'</span>，<span class="token variable">@bname</span><span class="token punctuation">)</span>$
+<span class="token keyword">SELECT</span> <span class="token variable">@bname$</span>
+
+<span class="token comment">#4、创建带inout模式的存储过程</span>
+<span class="token comment">#案例：传入a和b两个值，最终a和b都翻倍并返回</span>
+<span class="token keyword">CREATE</span> <span class="token keyword">PROCEDURE</span> myp6<span class="token punctuation">(</span><span class="token keyword">INOUT</span> a <span class="token keyword">INT</span><span class="token punctuation">,</span><span class="token keyword">INOUT</span> b <span class="token keyword">INT</span><span class="token punctuation">)</span>
+<span class="token keyword">BEGIN</span>
+	<span class="token keyword">SET</span> a<span class="token operator">=</span>a<span class="token operator">*</span><span class="token number">2</span><span class="token punctuation">;</span>
+	<span class="token keyword">SET</span> b<span class="token operator">=</span>b<span class="token operator">*</span><span class="token number">2</span><span class="token punctuation">;</span>
+<span class="token keyword">END</span>
+<span class="token comment">#调用</span>
+<span class="token keyword">SET</span> <span class="token variable">@m</span><span class="token operator">=</span><span class="token number">10</span>$
+<span class="token keyword">SET</span> <span class="token variable">@n</span><span class="token operator">=</span><span class="token number">20</span>$
+<span class="token keyword">CALL</span> myp6<span class="token punctuation">(</span><span class="token variable">@m</span><span class="token punctuation">,</span><span class="token variable">@n</span><span class="token punctuation">)</span>$
+<span class="token keyword">SELECT</span> <span class="token variable">@m</span><span class="token punctuation">,</span><span class="token variable">@n$</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h4 id="11-1-3-删除存储过程"><a href="#11-1-3-删除存储过程" class="headerlink" title="11.1.3 删除存储过程"></a>11.1.3 删除存储过程</h4><pre class="line-numbers language-sql" data-language="sql"><code class="language-sql">语法： <span class="token keyword">DROP</span> <span class="token keyword">PROCEDURE</span> 存储过程名
+<span class="token keyword">DROP</span> <span class="token keyword">PROCEDURE</span> p1<span class="token punctuation">;</span>
+<span class="token keyword">DROP</span> <span class="token keyword">PROCEDURE</span> p2<span class="token punctuation">,</span>p3<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<h4 id="11-1-4-查看存储过程的信息"><a href="#11-1-4-查看存储过程的信息" class="headerlink" title="11.1.4 查看存储过程的信息"></a>11.1.4 查看存储过程的信息</h4><pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">DESC</span> myp2<span class="token punctuation">;</span>
+<span class="token keyword">SHOW</span> <span class="token keyword">CREATE</span> <span class="token keyword">PROCEDURE</span> myp2<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<h3 id="11-2-函数"><a href="#11-2-函数" class="headerlink" title="11.2 函数"></a>11.2 函数</h3><ul>
+<li>含义：一组预先编译好的SQL语句的集合，理解成批处理语句</li>
+</ul>
+<blockquote>
+<p>1、提高代码的重用性</p>
+<p>2、简化操作</p>
+<p>3、减少了编译次数并且减少了和数据库服务器的连接次数，提高了效率</p>
+</blockquote>
+<ul>
+<li>区别：</li>
+</ul>
+<blockquote>
+<p>存储过程：可以有0个返回，也可以有多个返回，适合做批量插入、批量更新</p>
+<p>函数：有且仅有有个返回，适合做处理数据后返回一个结果</p>
+</blockquote>
+<h4 id="11-2-1-创建语法"><a href="#11-2-1-创建语法" class="headerlink" title="11.2.1 创建语法"></a>11.2.1 创建语法</h4><pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">CREATE</span> <span class="token keyword">FUNCTION</span> 函数名（参数列表） <span class="token keyword">RETURNS</span> 返回类型
+<span class="token keyword">BEGIN</span>
+	函数体
+<span class="token keyword">END</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li>注意：</li>
+</ul>
+<blockquote>
+<p>1、参数列表 包含两部分：<br>参数名 参数类型</p>
+<p>2、函数体：肯定会有RETURN语句，如果没有会报错<br>如果RETURN语句没有放在函数体的最后也不会报错，但不建议</p>
+<p>3、函数体中仅有一句话，则可以省略BEGIN END</p>
+<p>4、使用DELIMITER语句设置结束标记</p>
+</blockquote>
+<h4 id="11-2-2-调用语法"><a href="#11-2-2-调用语法" class="headerlink" title="11.2.2 调用语法"></a>11.2.2 调用语法</h4><pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SELECT</span> 函数名（参数列表）<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">#-------------案列演示-----------------</span>
+<span class="token comment">#1、无参数返回</span>
+<span class="token comment">#案例：返回公司的员工个数</span>
+<span class="token keyword">CREATE</span> <span class="token keyword">FUNCTION</span> myf1<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">RETURNS</span> <span class="token keyword">INT</span>
+<span class="token keyword">BEGIN</span>
+	<span class="token keyword">DECLARE</span> c <span class="token keyword">INT</span> <span class="token keyword">DEFAULT</span> <span class="token number">0</span><span class="token punctuation">;</span><span class="token comment">#定义变量</span>
+	<span class="token keyword">SELECT</span> <span class="token function">COUNT</span><span class="token punctuation">(</span><span class="token operator">*</span><span class="token punctuation">)</span> <span class="token keyword">INTO</span> c<span class="token comment">#赋值</span>
+	<span class="token keyword">FROM</span> employees<span class="token punctuation">;</span>
+	<span class="token keyword">RETURN</span> c<span class="token punctuation">;</span>
+<span class="token keyword">END</span> $
+
+<span class="token keyword">SELECT</span> myf1<span class="token punctuation">(</span><span class="token punctuation">)</span>$
+
+<span class="token comment">#2、有参数返回</span>
+<span class="token comment">#案例：根据部门名，返回该部门的平均工资</span>
+<span class="token keyword">CREATE</span> <span class="token keyword">FUNCTION</span> myf2<span class="token punctuation">(</span>deptName <span class="token keyword">VARCHAR</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">RETURNS</span> <span class="token keyword">DOUBLE</span>
+<span class="token keyword">BEGIN</span>
+	<span class="token keyword">DECLARE</span> sal <span class="token keyword">DOUBLE</span><span class="token punctuation">;</span>
+	<span class="token keyword">SELECT</span> <span class="token function">AVG</span><span class="token punctuation">(</span>salary<span class="token punctuation">)</span> <span class="token keyword">INTO</span> sal
+	<span class="token keyword">FROM</span> employees e
+	<span class="token keyword">JOIN</span> department d <span class="token keyword">ON</span> e<span class="token punctuation">.</span>department_id <span class="token operator">=</span> d<span class="token punctuation">.</span>department_id
+	<span class="token keyword">WHERE</span> d<span class="token punctuation">.</span>department_name<span class="token operator">=</span>deptName<span class="token punctuation">;</span>
+	<span class="token keyword">RETURN</span> sal<span class="token punctuation">;</span>
+<span class="token keyword">END</span> $
+<span class="token keyword">SELECT</span> myf2<span class="token punctuation">(</span><span class="token string">'IT'</span><span class="token punctuation">)</span>$<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h4 id="11-2-3-查看函数"><a href="#11-2-3-查看函数" class="headerlink" title="11.2.3 查看函数"></a>11.2.3 查看函数</h4><pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">SHOW</span> <span class="token keyword">CREATE</span> <span class="token keyword">FUNCTION</span> myf2<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h4 id="11-2-4-删除函数"><a href="#11-2-4-删除函数" class="headerlink" title="11.2.4 删除函数"></a>11.2.4 删除函数</h4><pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token keyword">DROP</span> <span class="token keyword">FUNCTION</span> myf2<span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">#案例：创建函数，实现传入两个float，返回二者之和</span>
+<span class="token keyword">CREATE</span> <span class="token keyword">FUNCTION</span> test_fun1<span class="token punctuation">(</span>num1 <span class="token keyword">FLOAT</span><span class="token punctuation">,</span>nums <span class="token keyword">FLOAT</span><span class="token punctuation">)</span> <span class="token keyword">RETURN</span> <span class="token keyword">FLOAT</span>
+<span class="token keyword">BEGIN</span>
+	<span class="token keyword">DECLARE</span> SUM <span class="token keyword">FLOAT</span> <span class="token keyword">DEFAULT</span> <span class="token number">0</span><span class="token punctuation">;</span>
+	<span class="token keyword">SET</span> SUM <span class="token operator">=</span> num1<span class="token operator">+</span>nums<span class="token punctuation">;</span>
+	<span class="token keyword">RETURN</span> SUM<span class="token punctuation">;</span>
+<span class="token keyword">END</span> $
+<span class="token keyword">SELECT</span> test_funs<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">)</span>$<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://hxf233333.gitee.io/about">hxf233333</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://hxf233333.gitee.io/2021/03/05/MySQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0_day9/">https://hxf233333.gitee.io/2021/03/05/MySQL%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0_day9/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  
+  <div class="nav-item-next">
+    <a href="/2021/03/03/MySQL学习笔记_day8/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">MySQL学习笔记_day8 </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content comment-card" style="margin-top: 16px;">
+  <div class="comment-card-title">评论</div>
+  
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'qSMgf1fUe5ctohg1Qpgumrxo-gzGzoHsz',
+        appKey: 'W0FMWg3H2Gt8l8rYPK61HDKD',
+        placeholder: 'Just go go',
+        path: window.location.pathname,
+        avatar: 'mp',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        serverURLs: 'https://console.leancloud.cn',
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E5%8F%98%E9%87%8F"><span class="toc-text">10 变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#10-1-%E7%B3%BB%E7%BB%9F%E5%8F%98%E9%87%8F"><span class="toc-text">10.1 系统变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-2-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="toc-text">10.2 自定义变量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#10-2-1-%E7%94%A8%E6%88%B7%E5%8F%98%E9%87%8F"><span class="toc-text">10.2.1 用户变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10-2-2-%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F"><span class="toc-text">10.2.2 局部变量</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E5%92%8C%E5%87%BD%E6%95%B0"><span class="toc-text">11 存储过程和函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-1-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="toc-text">11.1 存储过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#11-1-1-%E5%88%9B%E5%BB%BA%E8%AF%AD%E6%B3%95"><span class="toc-text">11.1.1 创建语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-1-2-%E8%B0%83%E7%94%A8%E8%AF%AD%E6%B3%95"><span class="toc-text">11.1.2 调用语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-1-3-%E5%88%A0%E9%99%A4%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="toc-text">11.1.3 删除存储过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-1-4-%E6%9F%A5%E7%9C%8B%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E7%9A%84%E4%BF%A1%E6%81%AF"><span class="toc-text">11.1.4 查看存储过程的信息</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-2-%E5%87%BD%E6%95%B0"><span class="toc-text">11.2 函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#11-2-1-%E5%88%9B%E5%BB%BA%E8%AF%AD%E6%B3%95"><span class="toc-text">11.2.1 创建语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-2-2-%E8%B0%83%E7%94%A8%E8%AF%AD%E6%B3%95"><span class="toc-text">11.2.2 调用语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-2-3-%E6%9F%A5%E7%9C%8B%E5%87%BD%E6%95%B0"><span class="toc-text">11.2.3 查看函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-2-4-%E5%88%A0%E9%99%A4%E5%87%BD%E6%95%B0"><span class="toc-text">11.2.4 删除函数</span></a></li></ol></li></ol></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/hxf233333.png" class="author-img">
+
+<p class="author-name">hxf233333</p>
+<p class="author-description">make a dream</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>13</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>4</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>3</span>
+    <span>标签</span>
+  </a>
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E5%8F%98%E9%87%8F"><span class="toc-text">10 变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#10-1-%E7%B3%BB%E7%BB%9F%E5%8F%98%E9%87%8F"><span class="toc-text">10.1 系统变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-2-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="toc-text">10.2 自定义变量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#10-2-1-%E7%94%A8%E6%88%B7%E5%8F%98%E9%87%8F"><span class="toc-text">10.2.1 用户变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10-2-2-%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F"><span class="toc-text">10.2.2 局部变量</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E5%92%8C%E5%87%BD%E6%95%B0"><span class="toc-text">11 存储过程和函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-1-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="toc-text">11.1 存储过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#11-1-1-%E5%88%9B%E5%BB%BA%E8%AF%AD%E6%B3%95"><span class="toc-text">11.1.1 创建语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-1-2-%E8%B0%83%E7%94%A8%E8%AF%AD%E6%B3%95"><span class="toc-text">11.1.2 调用语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-1-3-%E5%88%A0%E9%99%A4%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="toc-text">11.1.3 删除存储过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-1-4-%E6%9F%A5%E7%9C%8B%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E7%9A%84%E4%BF%A1%E6%81%AF"><span class="toc-text">11.1.4 查看存储过程的信息</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-2-%E5%87%BD%E6%95%B0"><span class="toc-text">11.2 函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#11-2-1-%E5%88%9B%E5%BB%BA%E8%AF%AD%E6%B3%95"><span class="toc-text">11.2.1 创建语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-2-2-%E8%B0%83%E7%94%A8%E8%AF%AD%E6%B3%95"><span class="toc-text">11.2.2 调用语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-2-3-%E6%9F%A5%E7%9C%8B%E5%87%BD%E6%95%B0"><span class="toc-text">11.2.3 查看函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-2-4-%E5%88%A0%E9%99%A4%E5%87%BD%E6%95%B0"><span class="toc-text">11.2.4 删除函数</span></a></li></ol></li></ol></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/学习笔记">
+        <div class="categories-list-item">
+          学习笔记
+          <span class="categories-list-item-badge">9</span>
+        </div>
+      </a>
+    
+      <a href="/categories/思维导图">
+        <div class="categories-list-item">
+          思维导图
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/教程">
+        <div class="categories-list-item">
+          教程
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/搭建环境">
+        <div class="categories-list-item">
+          搭建环境
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\MySQL" title="MySQL"><div class="tags-list-item">MySQL</div></a>
+    
+    <a href="\tags\Linux" title="Linux"><div class="tags-list-item">Linux</div></a>
+    
+    <a href="\tags\教程" title="教程"><div class="tags-list-item">教程</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E5%8F%98%E9%87%8F"><span class="toc-text">10 变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#10-1-%E7%B3%BB%E7%BB%9F%E5%8F%98%E9%87%8F"><span class="toc-text">10.1 系统变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-2-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="toc-text">10.2 自定义变量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#10-2-1-%E7%94%A8%E6%88%B7%E5%8F%98%E9%87%8F"><span class="toc-text">10.2.1 用户变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10-2-2-%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F"><span class="toc-text">10.2.2 局部变量</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E5%92%8C%E5%87%BD%E6%95%B0"><span class="toc-text">11 存储过程和函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-1-%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="toc-text">11.1 存储过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#11-1-1-%E5%88%9B%E5%BB%BA%E8%AF%AD%E6%B3%95"><span class="toc-text">11.1.1 创建语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-1-2-%E8%B0%83%E7%94%A8%E8%AF%AD%E6%B3%95"><span class="toc-text">11.1.2 调用语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-1-3-%E5%88%A0%E9%99%A4%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B"><span class="toc-text">11.1.3 删除存储过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-1-4-%E6%9F%A5%E7%9C%8B%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E7%9A%84%E4%BF%A1%E6%81%AF"><span class="toc-text">11.1.4 查看存储过程的信息</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-2-%E5%87%BD%E6%95%B0"><span class="toc-text">11.2 函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#11-2-1-%E5%88%9B%E5%BB%BA%E8%AF%AD%E6%B3%95"><span class="toc-text">11.2.1 创建语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-2-2-%E8%B0%83%E7%94%A8%E8%AF%AD%E6%B3%95"><span class="toc-text">11.2.2 调用语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-2-3-%E6%9F%A5%E7%9C%8B%E5%87%BD%E6%95%B0"><span class="toc-text">11.2.3 查看函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-2-4-%E5%88%A0%E9%99%A4%E5%87%BD%E6%95%B0"><span class="toc-text">11.2.4 删除函数</span></a></li></ol></li></ol></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-05</div>
+        <a href="/2021/03/05/MySQL学习笔记_day9/"><div class="recent-posts-item-content">MySQL学习笔记_day9</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-03</div>
+        <a href="/2021/03/03/MySQL学习笔记_day8/"><div class="recent-posts-item-content">MySQL学习笔记_day8</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-02</div>
+        <a href="/2021/03/02/MySQL学习笔记_day7/"><div class="recent-posts-item-content">MySQL学习笔记_day7</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-01</div>
+        <a href="/2021/03/01/MySQL学习笔记_day6/"><div class="recent-posts-item-content">MySQL学习笔记_day6</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">hxf233333 </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>
