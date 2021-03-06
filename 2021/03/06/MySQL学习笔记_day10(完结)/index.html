@@ -350,8 +350,7 @@
 <li>特点：先判断后执行</li>
 </ul>
 <p><strong>1.没有添加控制条件</strong></p>
-<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">#1.没有添加控制条件</span>
-<span class="token comment">#案例：批量插入，根据次数插入到admin表中多条记录</span>
+<pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">#案例：批量插入，根据次数插入到admin表中多条记录</span>
 <span class="token keyword">CREATE</span> <span class="token keyword">PROCEDURE</span> pro_while<span class="token punctuation">(</span><span class="token operator">IN</span> insertCount <span class="token keyword">INT</span><span class="token punctuation">)</span>
 <span class="token keyword">BEGIN</span>
 	<span class="token keyword">DECLARE</span> i <span class="token keyword">INT</span> <span class="token keyword">DEFAULT</span> <span class="token number">1</span><span class="token punctuation">;</span>
@@ -362,7 +361,7 @@
 <span class="token keyword">END</span> $
 
 <span class="token keyword">CALL</span> pro_while1<span class="token punctuation">(</span><span class="token number">100</span><span class="token punctuation">)</span>$
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p><strong>2.添加leave语句</strong></p>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"><span class="token comment">#案例：批量插入，根据次数插入到admin表中多条记录，如果次数>20则停止</span>
 <span class="token keyword">TRUNCATE</span> <span class="token keyword">TABLE</span> admin$
@@ -561,9 +560,9 @@ until 结束循环的条件
     
     <a href="\tags\MySQL" title="MySQL"><div class="tags-list-item">MySQL</div></a>
     
-    <a href="\tags\Linux" title="Linux"><div class="tags-list-item">Linux</div></a>
-    
     <a href="\tags\教程" title="教程"><div class="tags-list-item">教程</div></a>
+    
+    <a href="\tags\Linux" title="Linux"><div class="tags-list-item">Linux</div></a>
     
   </div>
 </div>
