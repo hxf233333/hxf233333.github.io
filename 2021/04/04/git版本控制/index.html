@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html  lang="zh-CN" >
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#fff" id="theme-color">
+  <meta name="description" content="无情">
+  <link rel="icon" href="/img/hxf233333.png">
+  <title>git版本控制</title>
+  
+  
+  <meta property="og:title" content="git版本控制">
+  
+  
+  <meta property="og:url" content="https://hxf233333.gitee.io/2021/04/04/git%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/index.html">
+  
+  
+  <meta property="og:img" content="/img/hxf233333.png">
+  
+  
+  
+  <meta property="og:type" content="article">
+  <meta property="og:article:published_time" content="2021-04-04">
+  <meta property="og:article:modified_time" content="2021-04-04">
+  <meta property="og:article:author" content="hxf233333">
+  
+  
+  <meta property="og:article:tag" content="Linux">
+  
+  
+  
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+    var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+      }
+    };
+    setDarkmode();
+  </script>
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  </script>
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+  <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+  <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+  <link rel="prefetch" href="//unpkg.com/valine/dist/Valine.min.js" as="script">
+  
+  
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+
+  
+  
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+
+  
+  
+<link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+
+  
+  
+  
+  
+  
+  
+  <link href="/js/lib/prism/prism.min.css" rel="stylesheet" data-prism="prism">
+  
+  
+  
+<link rel="stylesheet" href="/js/lib/prism/prism-line-numbers.min.css">
+
+  
+  
+  
+<meta name="generator" content="Hexo 5.3.0"><link rel="alternate" href="/atom.xml" title="无情" type="application/atom+xml">
+</head>
+
+
+<body>
+  <div class="wrapper">
+    
+    <nav class="navbar">
+  <div class="navbar-logo">
+    <span class="navbar-logo-main">
+      
+      <img class="navbar-logo-img" src="/img/hxf233333.png" alt="logo">
+      
+      <span class="navbar-logo-dsc">hxf233333</span>
+    </span>
+  </div>
+  <div class="navbar-menu">
+    
+    <a href="/" class="navbar-menu-item">
+    
+    首页
+    
+    </a>
+    
+    <a href="/archives" class="navbar-menu-item">
+    
+    归档
+    
+    </a>
+    
+    <a href="/tags" class="navbar-menu-item">
+    
+    标签
+    
+    </a>
+    
+    <a href="/categories" class="navbar-menu-item">
+    
+    分类
+    
+    </a>
+    
+    <a href="/about" class="navbar-menu-item">
+    
+    关于
+    
+    </a>
+    
+    <a href="/links" class="navbar-menu-item">
+    
+    友链
+    
+    </a>
+    
+    <a class="navbar-menu-item darknavbar" id="dark"><i class="iconfont icon-weather"></i></a>
+    <a class="navbar-menu-item searchnavbar" id="search"><i class="iconfont icon-search" style="font-size: 1.2rem; font-weight: 400;"></i></a>
+  </div>
+</nav>
+    
+    <div id="local-search" style="display: none;">
+      <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容...">
+      <div id="search-content"></div>
+    </div>
+    
+    <div class="section-wrap">
+      <div class="container">
+        <div class="columns">
+          <main class="main-column">
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      git版本控制
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2021-04-04T07:20:52.000Z">
+      <i class="iconfont icon-calendar" style="margin-right: 2px;"></i>
+      <span>2021-04-04</span>
+    </time>
+    
+    <span class="dot"></span>
+    
+    <a href="/categories/常用工具/" class="post-meta-link">常用工具</a>
+    
+    
+    
+    <span class="dot"></span>
+    <span>1.2k 字</span>
+    
+  </div>
+  
+  <div class="post-meta post-show-meta" style="margin-top: -10px;">
+    <div style="display: flex; align-items: center;">
+      <i class="iconfont icon-biaoqian" style="margin-right: 2px; font-size: 1.15rem;"></i>
+      
+      
+        <a href="/tags/Linux/" class="post-meta-link">Linux</a>
+      
+    </div>
+  </div>
+  
+  </header>
+  <div id="section" class="post-content">
+    <h2 id="1-git介绍"><a href="#1-git介绍" class="headerlink" title="1 git介绍"></a>1 git介绍</h2><p><code>Git</code> 是一种分布式版本控制系统，它可以不受网络连接的限制，配合github或者gitee，是做项目版本管理和文档版本管理的首选[1]。</p>
+<p><img src="connect.png" alt="图片" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="connect.png" class="lozad post-image"></p>
+<p><strong>工作区</strong>：就是本地能看到的目录，本地项目文件夹就是一个工作区。</p>
+<p><strong>暂存区</strong>：本地版本库里存了很多东西，其中最重要的就是称为 <code>stage</code>（或者叫index）的暂存区，还有 <code>Git</code> 为我们自动创建的第一个分支 <code>master</code>，以及指向 <code>master</code> 的一个指针叫 <code>HEAD</code>。</p>
+<p><strong>本地版本库</strong>：工作区下有一个隐藏目录 <code>.git</code>，这个属于工作区，是 <code>Git</code> 的版本库。</p>
+<p><strong>远程版本库</strong>：一般指的是 <code>Git</code> 服务器上所对应的仓库，由master用户创建。</p>
+<h2 id="2-创建远程仓库"><a href="#2-创建远程仓库" class="headerlink" title="2 创建远程仓库"></a>2 创建远程仓库</h2><p>创建远程仓库的方式有两种：</p>
+<blockquote>
+<p>1.登录github网页版手动创建，github犯病容易断网</p>
+<p>2.在github上申请Personal access tokens，使用git命令创建远程仓库</p>
+</blockquote>
+<h3 id="2-1-git命令创建远程创库"><a href="#2-1-git命令创建远程创库" class="headerlink" title="2.1 git命令创建远程创库"></a>2.1 git命令创建远程创库</h3><p>1.在<code>github</code>上申请自己的<a target="_blank" rel="noopener" href="https://github.com/settings/tokens">api token</a></p>
+<p><img src="image-20210404132936072.png" alt="image-20210404132933036" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="image-20210404132936072.png" class="lozad post-image"></p>
+<p>2.这个只需配置一次，点击<code>Generate new token</code>，进入权限管理页面，勾选<code>repo</code>，<code>gist</code>，<code>delete_repo</code>三项生成<code>token密钥串</code></p>
+<p>3.本地使用<code>git</code>命令创建远程仓库[3]</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#创建新创库</span>
+<span class="token variable">$curl</span> -u ’用户名:token密钥‘ https://api.github.com/user/repos -d <span class="token string">'&#123; "name": "test","description":"This is a test repository","public":true &#125;'</span> 
+
+<span class="token comment">#本地关联远程仓库</span>
+<span class="token variable">$git</span> remote <span class="token function">add</span> origin git@github.com:hxf233333/test.git
+
+<span class="token comment">#查看远程仓库</span>
+<span class="token variable">$git</span> remote -v<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>4.本地使用<code>git</code>命令删除远程仓库[4]</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">curl</span> -XDELETE -H <span class="token string">'Authorization: token token密钥串'</span> <span class="token string">"https://api.github.com/repos/用户名/仓库名 "</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h2 id="3-git入门使用"><a href="#3-git入门使用" class="headerlink" title="3 git入门使用"></a>3 git入门使用</h2><h3 id="3-1-本地创建一个新仓库"><a href="#3-1-本地创建一个新仓库" class="headerlink" title="3.1 本地创建一个新仓库"></a>3.1 本地创建一个新仓库</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#创建工作区目录</span>
+<span class="token function">mkdir</span> <span class="token builtin class-name">test</span>
+
+<span class="token comment">#新建文件</span>
+<span class="token function">touch</span> README.md
+
+<span class="token comment">#在当前工作区初始化本地仓库</span>
+<span class="token function">git</span> init
+
+<span class="token comment">#将README.md添加到暂存区，如果想添加所有文件可用git add . 命令，这时候可通过git status看到文件当前状态</span>
+<span class="token function">git</span> <span class="token function">add</span> README.md
+
+<span class="token comment">#提交文件变动到版本库,通过 -m 参数可直接在命令行里输入提交描述文本，可追加多行</span>
+<span class="token function">git</span> commit -m <span class="token string">"first commit"</span>
+
+<span class="token comment">#强制修改当前分支为master分支</span>
+<span class="token function">git</span> branch -M master
+
+<span class="token comment">#本地关联远程仓库:</span>
+<span class="token function">git</span> remote <span class="token function">add</span> origin https://github.com/hxf233333/test.git
+
+<span class="token comment">#将本地的仓库内容改动推送到服务器master分支</span>
+<span class="token function">git</span> push -u origin master<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="3-2-已有仓库进行修改"><a href="#3-2-已有仓库进行修改" class="headerlink" title="3.2 已有仓库进行修改"></a>3.2 已有仓库进行修改</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#将远程版本库拷贝到本地，同时也将分支都拷贝到本地</span>
+<span class="token function">git</span> clone https://github.com/hxf233333/test
+
+<span class="token comment">#进入工作区目录</span>
+<span class="token builtin class-name">cd</span> <span class="token builtin class-name">test</span>
+
+<span class="token comment">#使用vim修改文件</span>
+<span class="token function">vim</span> test.cpp
+
+<span class="token function">git</span> <span class="token function">add</span> 文件名或目录 <span class="token comment">#添加到暂存区</span>
+<span class="token function">git</span> <span class="token function">rm</span>  文件名或目录 <span class="token comment">#从暂存区删除</span>
+
+<span class="token comment">#从暂存区提交文件变动到本地版本库,通过 -m 参数可直接在命令行里输入提交描述文本，可追加多行</span>
+<span class="token function">git</span> commit -m <span class="token string">"描述信息"</span>
+
+<span class="token comment">#本地关联远程仓库:</span>
+<span class="token function">git</span> remote <span class="token function">add</span> origin https://github.com/hxf233333/test.git
+
+<span class="token comment">#将本地的仓库内容改动推送到服务器master分支</span>
+<span class="token function">git</span> push -u origin master<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="4-分支基本操作"><a href="#4-分支基本操作" class="headerlink" title="4 分支基本操作"></a>4 分支基本操作</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment">#将远程版本库拷贝到本地，同时也将分支都拷贝到本地</span>
+<span class="token function">git</span> clone https://github.com/hxf233333/test
+
+<span class="token comment">#进入工作区目录</span>
+<span class="token builtin class-name">cd</span> <span class="token builtin class-name">test</span>
+
+<span class="token comment">#commit之后才会真正建立master分支，此时才可以建立其它分支</span>
+<span class="token function">git</span> <span class="token function">add</span> <span class="token builtin class-name">.</span> 
+<span class="token function">git</span> commit
+<span class="token function">git</span> branch develop
+
+<span class="token comment">#查看所有分支</span>
+<span class="token function">git</span> branch
+
+<span class="token comment">#切换到develop分支</span>
+<span class="token function">git</span> checkout develop
+
+<span class="token comment">#使用vim修改文件</span>
+<span class="token function">vim</span> test.cpp
+
+<span class="token function">git</span> <span class="token function">add</span> 文件名或目录 <span class="token comment">#添加到暂存区</span>
+<span class="token function">git</span> <span class="token function">rm</span>  文件名或目录 <span class="token comment">#从暂存区删除</span>
+
+<span class="token comment">#从暂存区提交文件变动到本地版本库,通过 -m 参数可直接在命令行里输入提交描述文本，可追加多行</span>
+<span class="token function">git</span> commit -m <span class="token string">"描述信息"</span>
+
+<span class="token comment">#本地关联远程仓库:</span>
+<span class="token function">git</span> remote <span class="token function">add</span> origin https://github.com/hxf233333/test.git
+
+<span class="token comment">#将本地的仓库内容改动推送到服务器develop分支</span>
+<span class="token function">git</span> push -u origin develop<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="5-管理分支"><a href="#5-管理分支" class="headerlink" title="5 管理分支"></a>5 管理分支</h2><p>获取分支，某次提交等 <code>git</code> 信息[2]</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># 显示暂存区和工作区的差异</span>
+$ <span class="token function">git</span> <span class="token function">diff</span>
+
+<span class="token comment"># 比较暂存区和版本库差异</span>
+$ <span class="token function">git</span> <span class="token function">diff</span> --staged
+
+<span class="token comment"># 显示多个分支之间的差异</span>
+$ <span class="token function">git</span> <span class="token function">diff</span> <span class="token punctuation">[</span>first-branch<span class="token punctuation">]</span><span class="token punctuation">..</span>.<span class="token punctuation">[</span>second-branch<span class="token punctuation">]</span>
+
+<span class="token comment"># 将其他分支合并到当前分支</span>
+$ <span class="token function">git</span> merge branchName
+
+<span class="token comment"># 在合并时创建一个新的master分支提交，这样可以生成 merge 提交变化</span>
+$ <span class="token function">git</span> merge --no-ff branchName<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><img src="merge.png" alt="图片" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="merge.png" class="lozad post-image"></p>
+<p>默认情况下，<code>Git</code> 执行”<code>快进式合并</code>“（fast-farward merge），会直接将 <code>Master</code>分支指向 <code>Develop</code> 分支，使用 <code>--no-ff</code> 参数后，会执行正常合并，在 <code>Master</code>分支上生成一个新节点，保证版本演进更清晰。</p>
+<blockquote>
+<p><strong>reference：</strong></p>
+<p>[1]<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Q_O0ey4C9tryPZaZeJocbA">https://mp.weixin.qq.com/s/Q_O0ey4C9tryPZaZeJocbA</a></p>
+<p>[2]<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/bZS5c2oKkUipqN2xV1EVVg">https://mp.weixin.qq.com/s/bZS5c2oKkUipqN2xV1EVVg</a></p>
+<p>[3]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/zhoudayang/p/5510729.html">https://www.cnblogs.com/zhoudayang/p/5510729.html</a></p>
+<p>[4]<a target="_blank" rel="noopener" href="https://www.cnblogs.com/yifeichongtian/p/12716767.html">https://www.cnblogs.com/yifeichongtian/p/12716767.html</a></p>
+</blockquote>
+
+  </div>
+  <div>
+  
+  <div class="post-note note-warning copyright" style="margin-top: 42px">
+    <p><span style="font-weight: bold;">作者：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://hxf233333.gitee.io/about">hxf233333</a></p>
+    <p><span style="font-weight: bold;">文章链接：</span><a target="_blank" rel="nofollow noopener noreferrer" href="https://hxf233333.gitee.io/2021/04/04/git%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/">https://hxf233333.gitee.io/2021/04/04/git%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/</a></p>
+    <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+  </div>
+  
+  </div>
+</article>
+<div class="nav">
+  
+  
+  <div class="nav-item-next">
+    <a href="/2021/03/06/MySQL学习笔记_day10(完结)/" class="nav-link">
+      <div>
+        <div class="nav-label">下一篇</div>
+        
+        <div class="nav-title">MySQL学习笔记_day10(完结) </div>
+        
+      </div>
+      <i class="iconfont icon-right nav-next-icon"></i>
+    </a>
+  </div>
+  
+</div>
+
+<div class="card card-content comment-card" style="margin-top: 16px;">
+  <div class="comment-card-title">评论</div>
+  
+  <div id="vcomments"></div>
+  
+  <script>
+    loadScript("//unpkg.com/valine/dist/Valine.min.js");
+    var oldLoadVa = window.onload;
+    window.onload = function () {
+      oldLoadVa && oldLoadVa();
+      new Valine({
+        el: '#vcomments',
+        appId: 'TILGM6Ga3CyeOjwCwggjbzaD-MdYXbMMI',
+        appKey: 's6cTuJch2xdAViWNL3P7uRx2',
+        placeholder: 'Just go go',
+        path: window.location.pathname,
+        avatar: 'mp',
+        meta: ["nick","mail","link"],
+        pageSize: '10',
+        lang: '',
+        visitor: 'false',
+        highlight: true,
+        recordIP: false,
+        
+        serverURLs: 'tilgm6ga.api.lncldglobal.com',
+        
+        
+        
+        enableQQ: 'false',
+        requiredFields: [],
+      });
+    };
+  </script>
+
+</div>
+
+<div class="card card-content toc-card" id="mobiletoc">
+  <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-git%E4%BB%8B%E7%BB%8D"><span class="toc-text">1 git介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93"><span class="toc-text">2 创建远程仓库</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-git%E5%91%BD%E4%BB%A4%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E5%88%9B%E5%BA%93"><span class="toc-text">2.1 git命令创建远程创库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-git%E5%85%A5%E9%97%A8%E4%BD%BF%E7%94%A8"><span class="toc-text">3 git入门使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E6%9C%AC%E5%9C%B0%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%96%B0%E4%BB%93%E5%BA%93"><span class="toc-text">3.1 本地创建一个新仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%B7%B2%E6%9C%89%E4%BB%93%E5%BA%93%E8%BF%9B%E8%A1%8C%E4%BF%AE%E6%94%B9"><span class="toc-text">3.2 已有仓库进行修改</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%88%86%E6%94%AF%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="toc-text">4 分支基本操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%AE%A1%E7%90%86%E5%88%86%E6%94%AF"><span class="toc-text">5 管理分支</span></a></li></ol>
+</div></main>
+          <aside class="left-column">
+            
+            <div class="card card-author">
+              
+<img src="/img/hxf233333.png" class="author-img">
+
+<p class="author-name">hxf233333</p>
+<p class="author-description">make a dream</p>
+<div class="author-message">
+  <a class="author-posts-count" href="/archives">
+    <span>15</span>
+    <span>文章</span>
+  </a>
+  <a class="author-categories-count" href="/categories">
+    <span>5</span>
+    <span>分类</span>
+  </a>
+  <a class="author-tags-count" href="/tags">
+    <span>3</span>
+    <span>标签</span>
+  </a>
+</div>
+
+            </div>
+            
+            <div class="sticky-tablet">
+  
+  
+  <article class="display-when-two-columns spacer">
+    <div class="card card-content toc-card">
+      <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-git%E4%BB%8B%E7%BB%8D"><span class="toc-text">1 git介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93"><span class="toc-text">2 创建远程仓库</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-git%E5%91%BD%E4%BB%A4%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E5%88%9B%E5%BA%93"><span class="toc-text">2.1 git命令创建远程创库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-git%E5%85%A5%E9%97%A8%E4%BD%BF%E7%94%A8"><span class="toc-text">3 git入门使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E6%9C%AC%E5%9C%B0%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%96%B0%E4%BB%93%E5%BA%93"><span class="toc-text">3.1 本地创建一个新仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%B7%B2%E6%9C%89%E4%BB%93%E5%BA%93%E8%BF%9B%E8%A1%8C%E4%BF%AE%E6%94%B9"><span class="toc-text">3.2 已有仓库进行修改</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%88%86%E6%94%AF%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="toc-text">4 分支基本操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%AE%A1%E7%90%86%E5%88%86%E6%94%AF"><span class="toc-text">5 管理分支</span></a></li></ol>
+    </div>
+  </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header"><i class="iconfont icon-fenlei" style="padding-right: 2px;"></i>分类</div>
+  <div class="categories-list">
+    
+      <a href="/categories/学习笔记">
+        <div class="categories-list-item">
+          学习笔记
+          <span class="categories-list-item-badge">10</span>
+        </div>
+      </a>
+    
+      <a href="/categories/思维导图">
+        <div class="categories-list-item">
+          思维导图
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/教程">
+        <div class="categories-list-item">
+          教程
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/搭建环境">
+        <div class="categories-list-item">
+          搭建环境
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/常用工具">
+        <div class="categories-list-item">
+          常用工具
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header"><i class="iconfont icon-biaoqian" style="padding-right: 2px;"></i>热门标签</div>
+  <div class="tags-list">
+    
+    <a href="\tags\MySQL" title="MySQL"><div class="tags-list-item">MySQL</div></a>
+    
+    <a href="\tags\Linux" title="Linux"><div class="tags-list-item">Linux</div></a>
+    
+    <a href="\tags\教程" title="教程"><div class="tags-list-item">教程</div></a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+          <aside class="right-column">
+            <div class="sticky-widescreen">
+  
+  
+  <article class="card card-content toc-card">
+    <div class="toc-header"><i class="iconfont icon-menu" style="padding-right: 2px;"></i>目录</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-git%E4%BB%8B%E7%BB%8D"><span class="toc-text">1 git介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93"><span class="toc-text">2 创建远程仓库</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-git%E5%91%BD%E4%BB%A4%E5%88%9B%E5%BB%BA%E8%BF%9C%E7%A8%8B%E5%88%9B%E5%BA%93"><span class="toc-text">2.1 git命令创建远程创库</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-git%E5%85%A5%E9%97%A8%E4%BD%BF%E7%94%A8"><span class="toc-text">3 git入门使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E6%9C%AC%E5%9C%B0%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E6%96%B0%E4%BB%93%E5%BA%93"><span class="toc-text">3.1 本地创建一个新仓库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%B7%B2%E6%9C%89%E4%BB%93%E5%BA%93%E8%BF%9B%E8%A1%8C%E4%BF%AE%E6%94%B9"><span class="toc-text">3.2 已有仓库进行修改</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%88%86%E6%94%AF%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="toc-text">4 分支基本操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%AE%A1%E7%90%86%E5%88%86%E6%94%AF"><span class="toc-text">5 管理分支</span></a></li></ol>
+  </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header"><i class="iconfont icon-wenzhang_huaban" style="padding-right: 2px;"></i>最近文章</div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-04-04</div>
+        <a href="/2021/04/04/git版本控制/"><div class="recent-posts-item-content">git版本控制</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-06</div>
+        <a href="/2021/03/06/MySQL学习笔记_day10(完结)/"><div class="recent-posts-item-content">MySQL学习笔记_day10(完结)</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-05</div>
+        <a href="/2021/03/05/MySQL学习笔记_day9/"><div class="recent-posts-item-content">MySQL学习笔记_day9</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2021-03-03</div>
+        <a href="/2021/03/03/MySQL学习笔记_day8/"><div class="recent-posts-item-content">MySQL学习笔记_day8</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+          </aside>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>Copyright ©
+          
+          2020 -
+          
+          2021
+        </span>
+        &nbsp;
+        <a href="/" class="footer-link">hxf233333 </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+        本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+        <span>&nbsp;|&nbsp;</span>
+        
+        
+        本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+  <a role="button" id="scrollbutton" class="basebutton"  aria-label="回到顶部">
+  <i class="iconfont icon-arrowleft button-icon"></i>
+</a>
+<a role="button" id="menubutton" class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a role="button" id="popbutton" class="basebutton" aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a role="button" id="darkbutton" class="basebutton darkwidget" aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a role="button" id="searchbutton" class="basebutton searchwidget" aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+
+  
+  
+  
+  <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img');
+    var i;
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a');
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'));
+      wrapper.setAttribute('aria-label', 'illustration');
+      wrapper.style.cssText = 'width: 100%; display: flex; justify-content: center;';
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt;
+      wrapper.dataset.nolink = true;
+      img[i].before(wrapper);
+      wrapper.append(img[i]);
+      var divWrap = document.createElement('div');
+      divWrap.classList.add('gallery');
+      wrapper.before(divWrap);
+      divWrap.append(wrapper);
+    }
+    baguetteBox.run('.gallery');
+  }
+</script>
+<script>loadScript("/js/lib/lightbox/baguetteBox.min.js", addImgLayout)</script>
+  
+  
+  
+<script src="/js/main.js"></script>
+
+  
+  <script>loadScript("/js/lib/busuanzi.min.js")</script>
+  
+  
+  <script>
+    var addLazyload = function () {
+      var observer = lozad('.lozad', {
+        load: function (el) {
+          el.srcset = el.getAttribute('data-src');
+        },
+        loaded: function (el) {
+          el.classList.add('loaded');
+        }
+      });
+      observer.observe();
+    }
+  </script>
+  <script>loadScript("/js/lib/lozad.min.js", addLazyload)</script>
+  
+  
+</body>
+
+</html>
